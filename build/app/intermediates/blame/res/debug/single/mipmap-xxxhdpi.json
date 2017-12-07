@@ -1,0 +1,14 @@
+[
+    {
+        "merged": "/home/barre_k/IdeaProjects/klymbrapp/build/app/intermediates/res/merged/debug/mipmap-xxxhdpi/ic_launcher.png",
+        "source": "/home/barre_k/IdeaProjects/klymbrapp/android/app/src/main/res/mipmap-xxxhdpi/ic_launcher.png"
+    },
+    {
+        "merged": "/home/barre_k/IdeaProjects/klymbr/build/app/intermediates/res/merged/debug/mipmap-xxxhdpi/ic_launcher.png",
+        "source": "/home/barre_k/IdeaProjects/klymbr/android/app/src/main/res/mipmap-xxxhdpi/ic_launcher.png"
+    },
+    {
+        "merged": "/home/barre_k/IdeaProjects/mobile/build/app/intermediates/res/merged/debug/mipmap-xxxhdpi/ic_launcher.png",
+        "source": "/home/barre_k/IdeaProjects/mobile/android/app/src/main/res/mipmap-xxxhdpi/ic_launcher.png"
+    }
+]
