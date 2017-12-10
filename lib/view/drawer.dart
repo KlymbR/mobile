@@ -28,9 +28,9 @@ class _LocalDrawerState extends State<LocalDrawer> {
           )),
           new ListTile(
             leading: const Icon(Icons.navigate_next),
-            title: const Text('Navigate somewhere'),
+            title: const Text('Localisation des salles de sports'),
             onTap: () {
-//              Navigator.popAndPushNamed(context, "/a");
+              Navigator.popAndPushNamed(context, "/map");
             },
           ),
 //          Différentes données affichées dans l'app :

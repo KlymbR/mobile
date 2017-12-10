@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
-import 'view/userView.dart';
-import 'package:klymbr/view/loginview.dart';
+import 'view/view_user.dart';
+import 'package:klymbr/view/view_login.dart';
 import 'package:klymbr/example/contacts_demo.dart';
+import 'package:klymbr/view/view_map.dart';
 
 void main() {
   runApp(new MyApp());
@@ -47,7 +48,7 @@ class MyApp extends StatelessWidget {
       routes: <String, WidgetBuilder>{
         '/a': (BuildContext context) => new ContactsDemo(),
         '/b': (BuildContext context) => new ContactsDemo(),
-        '/c': (BuildContext context) => new ContactsDemo(),
+        '/map': (BuildContext context) => new MapView(),
       },
       theme: new ThemeData(
         primarySwatch: this._colorapp,
