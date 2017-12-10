@@ -5,7 +5,7 @@ import 'package:klymbr/view/view_qr.dart';
 
 class LoginPage extends StatefulWidget {
   LoginPage({Key key}) : super(key: key);
-  static const String routeBody = "/login";
+  static const String routeName = "/login";
 
   @override
   _LoginPageState createState() => new _LoginPageState();

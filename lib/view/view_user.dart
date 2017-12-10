@@ -10,7 +10,7 @@ import 'package:intl/intl.dart';
 class UserView extends StatefulWidget {
   UserView({Key key}) : super(key: key);
 
-  static const String routeBody = "/";
+  static const String routeWay = "/";
 
   @override
   _UserViewState createState() => new _UserViewState();

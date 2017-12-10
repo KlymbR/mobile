@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
-import 'view/view_user.dart';
+import 'package:klymbr/view/view_user.dart';
+import 'package:klymbr/view/view_way.dart';
 import 'package:klymbr/view/view_login.dart';
-import 'package:klymbr/example/contacts_demo.dart';
 import 'package:klymbr/view/view_map.dart';
+import 'package:klymbr/example/contacts_demo.dart';
 
 void main() {
   runApp(new MyApp());
@@ -26,14 +27,19 @@ class MyApp extends StatelessWidget {
 
   DrawerRoute _routeTo(RouteSettings settings) {
     switch (settings.name) {
-      case UserView.routeBody:
+      case UserView.routeWay:
         return new DrawerRoute(
           builder: (_) => new UserView(),
           settings: settings,
         );
-      case LoginPage.routeBody:
+      case LoginPage.routeName:
         return new DrawerRoute(
           builder: (_) => new LoginPage(),
+          settings: settings,
+        );
+      case ClimbWays.routeName:
+        return new DrawerRoute(
+          builder: (_) => new ClimbWays(),
           settings: settings,
         );
     }
