@@ -1,4 +1,6 @@
 import 'dart:async';
+import 'dart:convert';
+import 'package:http/http.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:klymbr/view/drawer.dart' show LocalDrawer;
@@ -6,6 +8,7 @@ import 'package:klymbr/models/data.dart' show DataUser;
 import 'package:klymbr/models/fileio.dart' show Storage;
 import 'package:klymbr/network/client.dart' show Connection;
 import 'package:intl/intl.dart';
+import 'package:qrcode_reader/QRCodeReader.dart';
 
 class UserView extends StatefulWidget {
   UserView({Key key}) : super(key: key);
@@ -17,7 +20,7 @@ class UserView extends StatefulWidget {
 }
 
 class _UserViewState extends State<UserView> {
-  Map _value;
+  Future<Map> _value;
 
   @override
   void initState() {
@@ -31,9 +34,13 @@ class _UserViewState extends State<UserView> {
 //    new Storage(fileDb[0]).readJson().then((Map value) {
 //      this._value = value;
 //    });
-
-    print("Utilisateur Json : ");
-    print(this._value);
+//    Storage st = new Storage("userdata");
+//    st.readJson().then((Map json) {
+//      print(json.toString());
+//      print("Utilisateur Json : ");
+//      this._value = json;
+//      print(this._value);
+//    });
   }
 
   @override
@@ -43,14 +50,28 @@ class _UserViewState extends State<UserView> {
       appBar: new AppBar(
         title: new Text("Mon compte"),
       ),
-      body: new _UserFormField(userMap: _value),
+      body: new _UserFormField(),
     );
   }
 }
 
+//new FutureBuilder<String>(
+//future: _calculation, // a Future<String> or null
+//builder: (BuildContext context, AsyncSnapshot<String> snapshot) {
+//switch (snapshot.connectionState) {
+//case ConnectionState.none: return new Text('Press button to start');
+//case ConnectionState.waiting: return new Text('Awaiting result...');
+//default:
+//if (snapshot.hasError)
+//return new Text('Error: ${snapshot.error}');
+//else
+//return new Text('Result: ${snapshot.data}');
+//}
+//},
+//)
+
 class _UserFormField extends StatefulWidget {
-  _UserFormField({Key key, this.userMap}) : super(key: key);
-  final Map userMap;
+  _UserFormField({Key key}) : super(key: key);
 
   @override
   __UserFormFieldState createState() => new __UserFormFieldState();
@@ -60,6 +81,8 @@ class __UserFormFieldState extends State<_UserFormField> {
   final GlobalKey<FormState> _formKey = new GlobalKey<FormState>();
   final _FrNumberTextInputFormatter _phoneNumberFormatter =
       new _FrNumberTextInputFormatter();
+  final List<TextEditingController> _controllerList =
+      new List.generate(4, (_) => new TextEditingController());
 
   DataUser _user;
   bool _autovalidate = false;
@@ -68,14 +91,23 @@ class __UserFormFieldState extends State<_UserFormField> {
   @override
   void initState() {
     super.initState();
-    if (widget.userMap == null) {
-      _user = new DataUser();
-      print("befor push");
-    } else {
-      _user = new DataUser.fromJson(widget.userMap);
-    }
-    print("Utilisateur : ");
-    print(_user.toJson());
+    Storage st = new Storage("userdata");
+    st.readJson().then((Map json) {
+      print(json.toString());
+      print("Utilisateur Json : ");
+      print(json);
+      _user = new DataUser.fromJson(json);
+      print(_user);
+      _controllerList[0].text = _user.lastname;
+      _controllerList[1].text = _user.firstName;
+      _controllerList[2].text = _user.licenceNbr;
+      _controllerList[3].text = _user.phone;
+      setState(() {
+        _user.birthday;
+        _user.genre;
+      });
+    });
+    _user = new DataUser();
   }
 
   void showInSnackBar(String value) {
@@ -90,7 +122,7 @@ class __UserFormFieldState extends State<_UserFormField> {
     } else {
       form.save();
       print(_user);
-      showInSnackBar('${_user.name}\'s phone number is ${_user.phoneNumber}');
+      showInSnackBar('${_user.lastname}\'s phone number is ${_user.phone}');
     }
   }
 
@@ -155,22 +187,22 @@ class __UserFormFieldState extends State<_UserFormField> {
       autovalidate: _autovalidate,
       onWillPop: _warnUserAboutInvalidData,
       child: new ListView(
-        padding: const EdgeInsets.only(right: 12.0),
         children: <Widget>[
           new Image.asset(
-            'images/user.jpg',
+            'images/daftpunk.jpg',
             width: 600.0,
             height: 240.0,
             fit: BoxFit.cover,
           ),
           new Container(
+            padding: const EdgeInsets.only(right: 12.0),
 //                padding: const EdgeInsets.all(20.0),
             alignment: Alignment.center,
             child: new DropdownButton<String>(
-              value: _user.sex,
+              value: _user.genre,
               onChanged: (String newValue) {
                 setState(() {
-                  _user.sex = newValue;
+                  _user.genre = newValue;
                 });
               },
               items: <String>["Monsieur", "Madame"].map((String value) {
@@ -181,81 +213,100 @@ class __UserFormFieldState extends State<_UserFormField> {
               }).toList(),
             ),
           ),
-          new Row(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: <Widget>[
-              new Expanded(
-                child: new TextFormField(
-                  decoration: const InputDecoration(
-                    icon: const Icon(Icons.person),
-                    hintText: "Comment tu t'appel",
-                    labelText: 'Nom *',
+          new Container(
+            padding: const EdgeInsets.only(right: 12.0),
+            child: new Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: <Widget>[
+                new Expanded(
+                  child: new TextFormField(
+                    decoration: const InputDecoration(
+                      icon: const Icon(Icons.person),
+                      hintText: "Comment tu t'appel",
+                      labelText: 'Nom *',
+                    ),
+                    controller: _controllerList[0],
+                    initialValue: _user.lastname,
+                    onSaved: (String value) {
+                      _user.lastname = value;
+                    },
+                    validator: _validateName,
                   ),
-                  onSaved: (String value) {
-                    _user.name = value;
-                  },
-                  validator: _validateName,
                 ),
-              ),
-              const SizedBox(width: 16.0),
-              new Expanded(
-                child: new TextFormField(
-                  decoration: const InputDecoration(
-                    hintText: "Comment tu t'appel",
-                    labelText: 'Prenom *',
+                const SizedBox(width: 16.0),
+                new Expanded(
+                  child: new TextFormField(
+                    decoration: const InputDecoration(
+                      hintText: "Comment tu t'appel",
+                      labelText: 'Prenom *',
+                    ),
+                    controller: _controllerList[1],
+                    initialValue: _user.firstName,
+                    onSaved: (String value) {
+                      _user.firstName = value;
+                    },
+                    validator: _validateName,
                   ),
-                  onSaved: (String value) {
-                    _user.firstName = value;
-                  },
-                  validator: _validateName,
                 ),
-              ),
-            ],
-          ),
-          new _DateTimePicker(
-//            icon: const Icon(Icons.confirmation_number),
-            labelText: 'Date de naissance',
-            selectedDate: _user.birthday,
-            selectDate: (DateTime date) {
-              setState(() {
-//                _birthDate = date;
-                _user.birthday = date;
-                print(date.toString());
-              });
-            },
-          ),
-          new TextFormField(
-            decoration: const InputDecoration(
-              icon: const Icon(Icons.confirmation_number),
-              prefixText: 'N°',
-              hintText: "Licence",
-              labelText: 'Licence *',
-              prefixStyle: const TextStyle(color: Colors.red),
-              suffixStyle: const TextStyle(color: Colors.red),
+              ],
             ),
-            maxLines: 1,
-            onSaved: (String value) {
-              _user.licenceNbr = value;
-            },
-            validator: _validateLicence,
           ),
-          new TextFormField(
-            decoration: const InputDecoration(
-                icon: const Icon(Icons.phone),
-                hintText: 'Where can we reach you?',
-                labelText: 'Phone Number *',
-                prefixText: '+33'),
-            keyboardType: TextInputType.phone,
-            onSaved: (String value) {
-              _user.phoneNumber = value;
-            },
-            validator: _validatePhoneNumber,
-            // TextInputFormatters are applied in sequence.
-            inputFormatters: <TextInputFormatter>[
-              WhitelistingTextInputFormatter.digitsOnly,
-              // Fit the validating format.
-              _phoneNumberFormatter,
-            ],
+          new Container(
+            padding: const EdgeInsets.only(right: 12.0),
+            child: new _DateTimePicker(
+//            icon: const Icon(Icons.confirmation_number),
+              labelText: 'Date de naissance',
+              selectedDate: _user.birthday,
+              selectDate: (DateTime date) {
+                setState(() {
+//                _birthDate = date;
+                  _user.birthday = date;
+                });
+              },
+            ),
+          ),
+          new Container(
+            padding: const EdgeInsets.only(right: 12.0),
+            child: new TextFormField(
+              decoration: const InputDecoration(
+                icon: const Icon(Icons.confirmation_number),
+                prefixText: 'N°',
+                hintText: "Licence",
+                labelText: 'Licence *',
+                prefixStyle: const TextStyle(color: Colors.red),
+                suffixStyle: const TextStyle(color: Colors.red),
+              ),
+              initialValue: _user.licenceNbr,
+              controller: _controllerList[2],
+              maxLines: 1,
+              onSaved: (String value) {
+                _user.licenceNbr = value;
+              },
+              validator: _validateLicence,
+            ),
+          ),
+          new Container(
+            padding: const EdgeInsets.only(right: 12.0),
+            child: new TextFormField(
+              decoration: const InputDecoration(
+                  icon: const Icon(Icons.phone),
+                  hintText: 'Where can we reach you?',
+                  labelText: 'Phone Number *',
+                  prefixText: '+33'),
+              keyboardType: TextInputType.phone,
+              initialValue: _user.phone,
+              controller: _controllerList[3],
+              onSaved: (String value) {
+                _user.phone = value;
+              },
+              validator: _validatePhoneNumber,
+              // TextInputFormatters are applied in sequence.
+              inputFormatters: <TextInputFormatter>[
+                WhitelistingTextInputFormatter.digitsOnly,
+                // Fit the validating format.
+                _phoneNumberFormatter,
+              ],
+            ),
           ),
           new Container(
             padding: const EdgeInsets.all(20.0),
@@ -263,16 +314,10 @@ class __UserFormFieldState extends State<_UserFormField> {
             child: new Column(
               children: <Widget>[
                 new RaisedButton(
-                  child: const Text('SUBMIT'),
+                  child: const Text('Envoyer'),
                   onPressed: _handleSubmitted,
                 ),
                 const SizedBox(height: 16.0),
-                new RaisedButton(
-                  child: const Text('SCAN'),
-                  onPressed: (){
-                    Navigator.pushNamed(context, "/login");
-                    },
-                )
               ],
             ),
           ),

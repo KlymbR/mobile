@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:klymbr/view/view_user.dart';
 import 'package:klymbr/view/view_way.dart';
-import 'package:klymbr/view/view_login.dart';
 import 'package:klymbr/view/view_map.dart';
 import 'package:klymbr/example/contacts_demo.dart';
 
@@ -32,11 +31,6 @@ class MyApp extends StatelessWidget {
           builder: (_) => new UserView(),
           settings: settings,
         );
-      case LoginPage.routeName:
-        return new DrawerRoute(
-          builder: (_) => new LoginPage(),
-          settings: settings,
-        );
       case ClimbWays.routeName:
         return new DrawerRoute(
           builder: (_) => new ClimbWays(),
@@ -52,9 +46,9 @@ class MyApp extends StatelessWidget {
     return new MaterialApp(
       title: this._titleapp,
       routes: <String, WidgetBuilder>{
-        '/a': (BuildContext context) => new ContactsDemo(),
         '/b': (BuildContext context) => new ContactsDemo(),
         '/map': (BuildContext context) => new MapView(),
+//        '/a': (BuildContext context) => new ,
       },
       theme: new ThemeData(
         primarySwatch: this._colorapp,

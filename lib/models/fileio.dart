@@ -13,7 +13,6 @@ class Storage {
     return new File('$dir/$_filename');
   }
 
-
   Future<Map> readJson() async {
     try {
       return JSON.decode((await _getLocalFile()).readAsStringSync());
