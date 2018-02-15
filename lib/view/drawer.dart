@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:qrcode_reader/QRCodeReader.dart';
 import 'package:klymbr/network/client.dart';
 import 'package:klymbr/models/data.dart' show DataUser;
 import 'package:klymbr/models/fileio.dart' show Storage;
@@ -29,9 +28,9 @@ class _LocalDrawerState extends State<LocalDrawer> {
               ),
             ),
             onDetailsPressed: (){
-              if (widget.localRoute == "/")
-                Navigator.pop(context);
-              else
+//              if (widget.localRoute == "/")
+//                Navigator.pop(context);
+//              else
                 Navigator.pushReplacementNamed(context, "/");
             },
           ),

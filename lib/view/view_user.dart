@@ -82,7 +82,7 @@ class __UserFormFieldState extends State<_UserFormField> {
   final _FrNumberTextInputFormatter _phoneNumberFormatter =
       new _FrNumberTextInputFormatter();
   final List<TextEditingController> _controllerList =
-      new List.generate(4, (_) => new TextEditingController());
+      new List.generate(5, (_) => new TextEditingController());
 
   DataUser _user;
   bool _autovalidate = false;
@@ -93,19 +93,16 @@ class __UserFormFieldState extends State<_UserFormField> {
     super.initState();
     Storage st = new Storage("userdata");
     st.readJson().then((Map json) {
-      print(json.toString());
-      print("Utilisateur Json : ");
-      print(json);
-      _user = new DataUser.fromJson(json);
-      print(_user);
-      _controllerList[0].text = _user.lastname;
-      _controllerList[1].text = _user.firstName;
-      _controllerList[2].text = _user.licenceNbr;
-      _controllerList[3].text = _user.phone;
-      setState(() {
-        _user.birthday;
-        _user.genre;
-      });
+      if (_user != null) {
+        _controllerList[0].text = _user.lastname;
+        _controllerList[1].text = _user.firstName;
+        _controllerList[2].text = _user.licenceNbr;
+        _controllerList[3].text = _user.phone;
+        setState(() {
+          _user.birthday;
+          _user.genre;
+        });
+      }
     });
     _user = new DataUser();
   }

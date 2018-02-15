@@ -1,10 +1,76 @@
 import 'package:flutter/material.dart';
 import 'package:klymbr/view/drawer.dart' show LocalDrawer;
+import 'dart:async';
+import 'package:klymbr/models/data.dart';
+import 'dart:convert';
+import 'package:klymbr/data.dart';
 
-enum _Location { Barbados, Bahamas, Bermuda }
+enum _Access { Free, Occupied, Climbing }
 
 typedef Widget DemoItemBodyBuilder<T>(DemoItem<T> item);
 typedef String ValueToString<T>(T value);
+
+class CollapsibleBody extends StatelessWidget {
+  const CollapsibleBody(
+      {this.margin: EdgeInsets.zero,
+      this.child,
+      this.onSave,
+      this.onCancel,
+      this.access});
+
+  final EdgeInsets margin;
+  final Widget child;
+  final VoidCallback onSave;
+  final VoidCallback onCancel;
+  final _Access access;
+
+  Widget _wayWidjet(BuildContext context) {
+    final ThemeData theme = Theme.of(context);
+    final TextTheme textTheme = theme.textTheme;
+    List<Widget> _climb = new List<Widget>();
+
+    if (access == _Access.Free)
+      _climb.add(new Container(
+          margin: const EdgeInsets.only(right: 8.0),
+          child: new FlatButton(
+              onPressed: onSave,
+              textTheme: ButtonTextTheme.accent,
+              child: const Text('Grimper'))));
+    else if (access == _Access.Climbing)
+      _climb.add(new Container(
+          margin: const EdgeInsets.only(right: 8.0),
+          child: new FlatButton(
+              onPressed: null,
+              textTheme: ButtonTextTheme.accent,
+              child: const Text('Stop'))));
+
+    _climb.add(new FlatButton(
+        onPressed: onCancel,
+        child: const Text('Retour',
+            style: const TextStyle(
+                color: Colors.black54,
+                fontSize: 15.0,
+                fontWeight: FontWeight.w500))));
+
+    return new Column(children: <Widget>[
+      new Container(
+          margin: const EdgeInsets.only(left: 24.0, right: 24.0, bottom: 24.0) -
+              margin,
+          child: new Center(
+              child: new DefaultTextStyle(
+                  style: textTheme.caption.copyWith(fontSize: 15.0),
+                  child: child))),
+      const Divider(height: 1.0),
+      new Container(
+          padding: const EdgeInsets.symmetric(vertical: 16.0),
+          child: new Row(
+              mainAxisAlignment: MainAxisAlignment.end, children: _climb))
+    ]);
+  }
+
+  @override
+  Widget build(BuildContext context) => _wayWidjet(context);
+}
 
 class DualHeaderWithHint extends StatelessWidget {
   const DualHeaderWithHint({this.name, this.value, this.hint, this.showHint});
@@ -23,7 +89,7 @@ class DualHeaderWithHint extends StatelessWidget {
       sizeCurve: Curves.fastOutSlowIn,
       crossFadeState:
           isExpanded ? CrossFadeState.showSecond : CrossFadeState.showFirst,
-      duration: const Duration(milliseconds: 200),
+      duration: const Duration(milliseconds: 300),
     );
   }
 
@@ -84,54 +150,6 @@ class DemoItem<T> {
   }
 }
 
-class CollapsibleBody extends StatelessWidget {
-  const CollapsibleBody(
-      {this.margin: EdgeInsets.zero, this.child, this.onSave, this.onCancel});
-
-  final EdgeInsets margin;
-  final Widget child;
-  final VoidCallback onSave;
-  final VoidCallback onCancel;
-
-  @override
-  Widget build(BuildContext context) {
-    final ThemeData theme = Theme.of(context);
-    final TextTheme textTheme = theme.textTheme;
-
-    return new Column(children: <Widget>[
-      new Container(
-          margin: const EdgeInsets.only(left: 24.0, right: 24.0, bottom: 24.0) -
-              margin,
-          child: new Center(
-              child: new DefaultTextStyle(
-                  style: textTheme.caption.copyWith(fontSize: 15.0),
-                  child: child))),
-      const Divider(height: 1.0),
-      new Container(
-          padding: const EdgeInsets.symmetric(vertical: 16.0),
-          child: new Row(
-              mainAxisAlignment: MainAxisAlignment.end,
-              children: <Widget>[
-                new Container(
-                    margin: const EdgeInsets.only(right: 8.0),
-                    child: new FlatButton(
-                        onPressed: onCancel,
-                        child: const Text('CANCEL',
-                            style: const TextStyle(
-                                color: Colors.black54,
-                                fontSize: 15.0,
-                                fontWeight: FontWeight.w500)))),
-                new Container(
-                    margin: const EdgeInsets.only(right: 8.0),
-                    child: new FlatButton(
-                        onPressed: onSave,
-                        textTheme: ButtonTextTheme.accent,
-                        child: const Text('SAVE')))
-              ]))
-    ]);
-  }
-}
-
 class ClimbWays extends StatefulWidget {
   ClimbWays({Key key}) : super(key: key);
 
@@ -142,16 +160,23 @@ class ClimbWays extends StatefulWidget {
 }
 
 class _ClimbWaysState extends State<ClimbWays> {
-  List<DemoItem<dynamic>> _demoItems;
+  Future<List<DemoItem<dynamic>>> _demoItems;
 
-  @override
-  void initState() {
-    super.initState();
-    _demoItems = <DemoItem<dynamic>>[
-      new DemoItem<String>(
-        name: 'Test',
-        value: 'Chocolas',
-        hint: 'des pates',
+  Future<List<DemoItem<dynamic>>> get getDemoItem {
+    List<DemoItem<dynamic>> demoItems = new List();
+    List<Map<String, dynamic>> climbdata =
+        (JSON.decode(climbways) as Map<String, dynamic>)["ways"];
+
+    climbdata.forEach((Map<String, dynamic> data) {
+      _Access _access = data["disponibility"] == "Libre"
+          ? _Access.Free
+          : data["disponibility"] == "Occupé"
+              ? _Access.Occupied
+              : _Access.Climbing;
+      demoItems.add(new DemoItem<String>(
+        name: "Voie n°" + data["wayNbr"].toString(),
+        value: 'Difficulté ' + data["difficulty"],
+        hint: data["disponibility"],
         valueToString: (String value) => value,
         builder: (DemoItem<String> item) {
           void close() {
@@ -160,65 +185,112 @@ class _ClimbWaysState extends State<ClimbWays> {
             });
           }
 
-          return new Container();
-
-//          return new Form(
-//            child: new Builder(
-//              builder: (BuildContext context) {
-//                return new CollapsibleBody(
-//                  margin: const EdgeInsets.symmetric(horizontal: 16.0),
-//                  onSave: () {
-//                    Form.of(context).save();
-//                    close();
-//                  },
-//                  onCancel: () {
-//                    Form.of(context).reset();
-//                    close();
-//                  },
-//                  child: new Padding(
-//                    padding: const EdgeInsets.symmetric(horizontal: 16.0),
-//                    child: new TextFormField(
-//                      controller: item.textController,
-//                      decoration: new InputDecoration(
-//                        hintText: item.hint,
-//                        labelText: item.name,
-//                      ),
-//                      onSaved: (String value) {
-//                        item.value = value;
-//                      },
-//                    ),
-//                  ),
-//                );
-//              },
-//            ),
-//          );
+          return new Form(
+            child: new Builder(
+              builder: (BuildContext context) {
+                return new CollapsibleBody(
+                  access: _access,
+                  margin: const EdgeInsets.symmetric(horizontal: 12.0),
+                  onSave: () {
+                    Form.of(context).save();
+                    item.value =
+                        "En grimpe sur la voie " + data["wayNbr"].toString();
+                    close();
+                  },
+                  onCancel: () {
+                    Form.of(context).reset();
+                    close();
+                  },
+                  child: new Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                      child: new Row(
+                        children: <Widget>[
+                          new Expanded(
+                              child: new Column(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            children: <Widget>[
+                              new Text('Meilleur Score ' +
+                                  data["bestTime"]["time"].toString() +
+                                  "s"),
+                              const SizedBox(height: 16.0),
+                              new Text(data["bestTime"]["firstname"] +
+                                  " " +
+                                  data["bestTime"]["lastname"]),
+                              const SizedBox(height: 16.0),
+                              new Text('Le ' +
+                                  new DateTime.fromMillisecondsSinceEpoch(
+                                          data["bestTime"]["\$date"])
+                                      .toString()),
+                            ],
+                          )),
+                          const SizedBox(width: 16.0),
+                          new Expanded(
+                              child: new Column(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
+                                  crossAxisAlignment: CrossAxisAlignment.center,
+                                  children: <Widget>[
+                                new Text('Meilleur Score Personel de ' +
+                                    data["personaBestTime"]["time"].toString() +
+                                    "s"),
+                                const SizedBox(height: 16.0),
+                                new Text(
+                                    new DateTime.fromMillisecondsSinceEpoch(
+                                            data["personaBestTime"]["\$date"])
+                                        .toString()),
+                              ])),
+                        ],
+                      )),
+                );
+              },
+            ),
+          );
         },
-      ),
-    ];
+      ));
+    });
+
+    return new Future.value(demoItems);
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    _demoItems = getDemoItem;
   }
 
   @override
   Widget build(BuildContext context) {
     return new Scaffold(
-      drawer: new LocalDrawer(localRoute: "/ways"),
+      drawer: new LocalDrawer(localRoute: "/"),
       appBar: new AppBar(title: new Text("Sélection de voie")),
       body: new SingleChildScrollView(
         child: new Container(
-          margin: const EdgeInsets.all(24.0),
-          child: new ExpansionPanelList(
-            expansionCallback: (int index, bool isExpanded) {
-              setState(() {
-                _demoItems[index].isExpanded = !isExpanded;
-              });
-            },
-            children: _demoItems.map((DemoItem<dynamic> item) {
-              return new ExpansionPanel(
-                  isExpanded: item.isExpanded,
-                  headerBuilder: item.headerBuilder,
-                  body: item.builder(item));
-            }).toList(),
-          ),
-        ),
+            margin: const EdgeInsets.all(24.0),
+            child: new FutureBuilder(
+                future: _demoItems,
+                builder: (BuildContext context, AsyncSnapshot<List> snapshot) {
+                  debugPrint(snapshot.data.toString());
+                  switch (snapshot.connectionState) {
+                    case ConnectionState.none:
+                      return new ExpansionPanelList();
+                    case ConnectionState.waiting:
+                      return new ExpansionPanelList();
+                    default:
+                      return new ExpansionPanelList(
+                          expansionCallback: (int index, bool isExpended) {
+                            setState(() {
+                              snapshot.data[index].isExpanded = !isExpended;
+                            });
+                          },
+                          children: snapshot.data.map((DemoItem<dynamic> item) {
+                            return new ExpansionPanel(
+                                isExpanded: item.isExpanded,
+                                headerBuilder: item.headerBuilder,
+                                body: item.builder(item));
+                          }).toList());
+                  }
+                })),
       ),
     );
   }

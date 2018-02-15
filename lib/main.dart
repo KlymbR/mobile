@@ -25,6 +25,7 @@ class MyApp extends StatelessWidget {
   final Brightness _brightness = Brightness.light;
 
   DrawerRoute _routeTo(RouteSettings settings) {
+//    settings.name
     switch (settings.name) {
       case UserView.routeWay:
         return new DrawerRoute(

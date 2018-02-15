@@ -28,7 +28,6 @@ class DataUser implements DataImplement {
       this.genre, this.licenceNbr, this.birthday);
 
   factory DataUser.fromWebJson(Map<String, dynamic> data) {
-    print("data " + data.toString());
     return data == null
         ? null
         : new DataUser.init(data['firstname'], data['lastname'], data['phone'],
@@ -37,7 +36,6 @@ class DataUser implements DataImplement {
   }
 
   factory DataUser.fromJson(Map<String, dynamic> data) {
-    print("data " + data.toString());
     return data == null
         ? null
         : new DataUser.init(data['firstname'], data['lastname'], data['phone'],
