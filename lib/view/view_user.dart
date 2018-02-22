@@ -4,11 +4,11 @@ import 'package:http/http.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:klymbr/view/drawer.dart' show LocalDrawer;
-import 'package:klymbr/models/data.dart' show DataUser;
+import 'package:klymbr/models/data.dart' show DataUser, Licences, Address;
 import 'package:klymbr/models/fileio.dart' show Storage;
 import 'package:klymbr/network/client.dart' show Connection;
 import 'package:intl/intl.dart';
-import 'package:qrcode_reader/QRCodeReader.dart';
+import 'package:klymbr/view/expantion_item.dart';
 
 class UserView extends StatefulWidget {
   UserView({Key key}) : super(key: key);
@@ -20,12 +20,9 @@ class UserView extends StatefulWidget {
 }
 
 class _UserViewState extends State<UserView> {
-  Future<Map> _value;
-
   @override
   void initState() {
     super.initState();
-
 //    Internet Data
 //    new Connection().getJson("licenceUser").then((Map value) {
 //      this._value = value;
@@ -55,21 +52,6 @@ class _UserViewState extends State<UserView> {
   }
 }
 
-//new FutureBuilder<String>(
-//future: _calculation, // a Future<String> or null
-//builder: (BuildContext context, AsyncSnapshot<String> snapshot) {
-//switch (snapshot.connectionState) {
-//case ConnectionState.none: return new Text('Press button to start');
-//case ConnectionState.waiting: return new Text('Awaiting result...');
-//default:
-//if (snapshot.hasError)
-//return new Text('Error: ${snapshot.error}');
-//else
-//return new Text('Result: ${snapshot.data}');
-//}
-//},
-//)
-
 class _UserFormField extends StatefulWidget {
   _UserFormField({Key key}) : super(key: key);
 
@@ -82,17 +64,77 @@ class __UserFormFieldState extends State<_UserFormField> {
   final _FrNumberTextInputFormatter _phoneNumberFormatter =
       new _FrNumberTextInputFormatter();
   final List<TextEditingController> _controllerList =
-      new List.generate(5, (_) => new TextEditingController());
+      new List.generate(8, (_) => new TextEditingController());
+  ScrollController _scrollController;
+
+  Future<List<ExpantionItem<dynamic>>> _expensionItems;
 
   DataUser _user;
+  Address _address;
   bool _autovalidate = false;
   bool _formWasEdited = false;
+
+  Future<List<ExpantionItem<dynamic>>> get getExpensionItem async {
+    List<Map<String, dynamic>> info =
+        await new Storage("userlicences").readListJson();
+    List<ExpantionItem<dynamic>> expensionItems = new List();
+    print("userlicences = $info");
+
+    info.forEach((Map<String, dynamic> data) {
+      print("data = $data");
+      expensionItems.add(new ExpantionItem<String>(
+          name: "Licence",
+          value: data["fednb"],
+          valueToString: (String value) => value,
+          builder: (ExpantionItem<String> item) {
+            void close() {
+              setState(() {
+                item.isExpanded = false;
+              });
+            }
+
+            return new Column(
+              children: <Widget>[
+                new Container(
+                  child: new Center(
+                      child: new Row(
+                    children: <Widget>[
+                      new Expanded(
+                          child: new Column(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: <Widget>[
+                          new Text("${data["status"]}"),
+                          const SizedBox(height: 16.0),
+                          new Text("Club ${data["clubname"]}"),
+                          const SizedBox(height: 16.0),
+                          new Text("Numero du club ${data["clubnb"]}"),
+                          const SizedBox(height: 16.0),
+                          new Text("Valide jusqu'au ${data["enddate"]}"),
+                        ],
+                      )),
+                    ],
+                  )),
+                )
+              ],
+            );
+          }));
+    });
+    print("expensionItems = $expensionItems");
+    return new Future.value(expensionItems);
+  }
 
   @override
   void initState() {
     super.initState();
-    Storage st = new Storage("userdata");
-    st.readJson().then((Map json) {
+    _user = new DataUser();
+    _address = new Address();
+    _expensionItems = getExpensionItem;
+
+    new Storage("userdata").readJson().then((Map json) {
+      print("lecture dans User");
+      print(json);
+      _user = new DataUser.fromJson(json);
       if (_user != null) {
         _controllerList[0].text = _user.lastname;
         _controllerList[1].text = _user.firstName;
@@ -104,7 +146,17 @@ class __UserFormFieldState extends State<_UserFormField> {
         });
       }
     });
-    _user = new DataUser();
+
+    new Storage("useraddress").readJson().then((Map json) {
+      _address = new Address.fromJson(json);
+      print(_address);
+      if (_address != null) {
+        _controllerList[4].text = _address.number;
+        _controllerList[5].text = _address.way;
+        _controllerList[6].text = _address.postalcode;
+        _controllerList[7].text = _address.city;
+      }
+    });
   }
 
   void showInSnackBar(String value) {
@@ -184,6 +236,9 @@ class __UserFormFieldState extends State<_UserFormField> {
       autovalidate: _autovalidate,
       onWillPop: _warnUserAboutInvalidData,
       child: new ListView(
+        controller: _scrollController,
+        reverse: true,
+        shrinkWrap: true,
         children: <Widget>[
           new Image.asset(
             'images/daftpunk.jpg',
@@ -196,9 +251,10 @@ class __UserFormFieldState extends State<_UserFormField> {
 //                padding: const EdgeInsets.all(20.0),
             alignment: Alignment.center,
             child: new DropdownButton<String>(
-              value: _user.genre,
+              value: _user == null ? "Monsieur" : _user.genre,
               onChanged: (String newValue) {
                 setState(() {
+//                  if (_user != null)
                   _user.genre = newValue;
                 });
               },
@@ -223,7 +279,7 @@ class __UserFormFieldState extends State<_UserFormField> {
                       labelText: 'Nom *',
                     ),
                     controller: _controllerList[0],
-                    initialValue: _user.lastname,
+                    initialValue: _user == null ? "" : _user.lastname,
                     onSaved: (String value) {
                       _user.lastname = value;
                     },
@@ -238,7 +294,7 @@ class __UserFormFieldState extends State<_UserFormField> {
                       labelText: 'Prenom *',
                     ),
                     controller: _controllerList[1],
-                    initialValue: _user.firstName,
+                    initialValue: _user == null ? "" : _user.firstName,
                     onSaved: (String value) {
                       _user.firstName = value;
                     },
@@ -253,7 +309,7 @@ class __UserFormFieldState extends State<_UserFormField> {
             child: new _DateTimePicker(
 //            icon: const Icon(Icons.confirmation_number),
               labelText: 'Date de naissance',
-              selectedDate: _user.birthday,
+              selectedDate: _user == null ? new DateTime.now() : _user.birthday,
               selectDate: (DateTime date) {
                 setState(() {
 //                _birthDate = date;
@@ -273,7 +329,7 @@ class __UserFormFieldState extends State<_UserFormField> {
                 prefixStyle: const TextStyle(color: Colors.red),
                 suffixStyle: const TextStyle(color: Colors.red),
               ),
-              initialValue: _user.licenceNbr,
+              initialValue: _user == null ? "" : _user.licenceNbr,
               controller: _controllerList[2],
               maxLines: 1,
               onSaved: (String value) {
@@ -291,7 +347,7 @@ class __UserFormFieldState extends State<_UserFormField> {
                   labelText: 'Phone Number *',
                   prefixText: '+33'),
               keyboardType: TextInputType.phone,
-              initialValue: _user.phone,
+              initialValue: _user == null ? "" : _user.phone,
               controller: _controllerList[3],
               onSaved: (String value) {
                 _user.phone = value;
@@ -302,6 +358,77 @@ class __UserFormFieldState extends State<_UserFormField> {
                 WhitelistingTextInputFormatter.digitsOnly,
                 // Fit the validating format.
                 _phoneNumberFormatter,
+              ],
+            ),
+          ),
+          new Container(
+            padding: const EdgeInsets.only(left: 26.0, right: 16.0),
+            alignment: Alignment.center,
+            child: new Row(children: <Widget>[
+              new Expanded(
+                child: new TextFormField(
+                  decoration: const InputDecoration(
+                    hintText: "Numero",
+                    labelText: 'Numero de rue',
+                  ),
+                  keyboardType: TextInputType.number,
+                  controller: _controllerList[4],
+                  initialValue: _address == null ? "" : _address.number,
+                  onSaved: (String value) {
+                    _address.number = value;
+                  },
+                ),
+              ),
+              const SizedBox(width: 16.0),
+              new Expanded(
+                child: new TextFormField(
+                  decoration: const InputDecoration(
+                    hintText: "Rue",
+                    labelText: 'Nom de rue',
+                  ),
+                  controller: _controllerList[5],
+                  initialValue: _address == null ? "" : _address.way,
+                  onSaved: (String value) {
+                    _address.way = value;
+                  },
+                ),
+              ),
+            ]),
+          ),
+          new Container(
+            padding: const EdgeInsets.only(left: 26.0, right: 16.0),
+            alignment: Alignment.center,
+            child: new Row(
+              children: <Widget>[
+                new Expanded(
+                  child: new TextFormField(
+                    keyboardType: TextInputType.number,
+                    controller: _controllerList[6],
+                    initialValue: _address == null ? "" : _address.postalcode,
+                    onSaved: (String value) {
+                      _address.postalcode = value;
+                    },
+                    decoration: const InputDecoration(
+                      hintText: "Code Postal",
+                      labelText: 'Code Postal',
+                    ),
+                  ),
+                ),
+                const SizedBox(width: 16.0),
+                new Expanded(
+                  child: new TextFormField(
+                    keyboardType: TextInputType.text,
+                    controller: _controllerList[7],
+                    initialValue: _address == null ? "" : _address.city,
+                    onSaved: (String value) {
+                      _address.city = value;
+                    },
+                    decoration: const InputDecoration(
+                      hintText: "Ville",
+                      labelText: 'Nom de la Ville',
+                    ),
+                  ),
+                ),
               ],
             ),
           ),
@@ -319,11 +446,41 @@ class __UserFormFieldState extends State<_UserFormField> {
             ),
           ),
           new Container(
+            child: new FutureBuilder(
+                future: _expensionItems,
+                builder: (BuildContext context, AsyncSnapshot<List> snapshot) {
+                  switch (snapshot.connectionState) {
+                    case ConnectionState.none:
+                      return new ExpansionPanelList();
+                    case ConnectionState.waiting:
+                      return new ExpansionPanelList();
+                    default:
+                      print(snapshot.data);
+                      return new ExpansionPanelList(
+                        expansionCallback: (int index, bool isExpended) {
+                          setState(() {
+                            snapshot.data[index].isExpanded = !isExpended;
+                          });
+                        },
+                        children: snapshot.data == null
+                            ? const <ExpansionPanel>[]
+                            : snapshot.data.map((ExpantionItem<dynamic> item) {
+                                print("Expention = ${item.name}");
+                                return new ExpansionPanel(
+                                    isExpanded: item.isExpanded,
+                                    headerBuilder: item.headerBuilder,
+                                    body: item.builder(item));
+                              }).toList(),
+                      );
+                  }
+                }),
+          ),
+          new Container(
             padding: const EdgeInsets.only(top: 20.0),
             child: new Text('* champ obligatoire',
                 style: Theme.of(context).textTheme.caption),
           ),
-        ],
+        ].reversed.toList(),
       ),
     );
   }
