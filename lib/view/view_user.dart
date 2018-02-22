@@ -71,6 +71,7 @@ class __UserFormFieldState extends State<_UserFormField> {
 
   DataUser _user;
   Address _address;
+  String _userPicture;
   bool _autovalidate = false;
   bool _formWasEdited = false;
 
@@ -130,6 +131,7 @@ class __UserFormFieldState extends State<_UserFormField> {
     _user = new DataUser();
     _address = new Address();
     _expensionItems = getExpensionItem;
+    _userPicture = "";
 
     new Storage("userdata").readJson().then((Map json) {
       print("lecture dans User");
@@ -141,6 +143,7 @@ class __UserFormFieldState extends State<_UserFormField> {
         _controllerList[2].text = _user.licenceNbr;
         _controllerList[3].text = _user.phone;
         setState(() {
+          _userPicture = "images/daftpunk.jpg";
           _user.birthday;
           _user.genre;
         });
@@ -241,7 +244,7 @@ class __UserFormFieldState extends State<_UserFormField> {
         shrinkWrap: true,
         children: <Widget>[
           new Image.asset(
-            'images/daftpunk.jpg',
+            _userPicture,
             width: 600.0,
             height: 240.0,
             fit: BoxFit.cover,
