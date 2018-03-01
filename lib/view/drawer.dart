@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:klymbr/models/data.dart' show DataUser, Address, Licences;
 import 'package:klymbr/models/fileio.dart' show Storage;
 import 'package:klymbr/data.dart' show personaldata;
+import 'package:qrcode_reader/QRCodeReader.dart';
 import 'dart:convert';
 
 class LocalDrawer extends StatefulWidget {
@@ -109,14 +110,14 @@ class _LocalDrawerState extends State<LocalDrawer> {
                   print(new Address.fromJson(info));
                 });
 
-//              new QRCodeReader()
-//                  .setAutoFocusIntervalInMs(200)
-//                  .setForceAutoFocus(true)
-//                  .setTorchEnabled(true)
-//                  .setHandlePermissions(true)
-//                  .setExecuteAfterPermissionGranted(true)
-//                  .scan().then((String url) async {
-//              });
+              new QRCodeReader()
+                  .setAutoFocusIntervalInMs(200)
+                  .setForceAutoFocus(true)
+                  .setTorchEnabled(true)
+                  .setHandlePermissions(true)
+                  .setExecuteAfterPermissionGranted(true)
+                  .scan().then((String url) async {
+              });
             },
           )
         ],

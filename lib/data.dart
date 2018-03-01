@@ -7,13 +7,27 @@ const String personaldata = '''
 "birthday":  {\"\$date\": 1512980682785},
 "licenceNbr": "4567890",
 "licences": [
-{
-"clubname": "Toto's club",
-"clubnb": "123123",
-"fednb": "1210",
-"enddate": {\"\$date\": 1512980682785},
-"status": "Actif"
-}
+  {
+    "clubname": "Toto's club",
+    "clubnb": "123123",
+    "fednb": "1210",
+    "enddate": {\"\$date\": 1512980682785},
+    "status": "Actif"
+  },
+  {
+    "clubname": "Jacquie club",
+    "clubnb": "696969",
+    "fednb": "1210",
+    "enddate": {\"\$date\": 1512980682785},
+    "status": "Actif"
+  },
+  {
+    "clubname": "Michel club",
+    "clubnb": "171717",
+    "fednb": "1216",
+    "enddate": {\"\$date\": 1512980682785},
+    "status": "Désactivé"
+  }
 ],
 "address": {
 "number": "6",
