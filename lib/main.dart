@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:klymbr/view/view_user.dart';
 import 'package:klymbr/view/view_way.dart';
-import 'package:klymbr/view/view_map.dart';
+import 'package:klymbr/view/view_user.dart' show UserView;
+import 'package:klymbr/view/view_map.dart' show MapView;
+import 'package:klymbr/view/view_stats.dart' show Stats;
 import 'package:klymbr/example/contacts_demo.dart';
 
 void main() {
@@ -36,6 +37,11 @@ class MyApp extends StatelessWidget {
         return new DrawerRoute(
           builder: (_) => new ClimbWays(),
           settings: settings,
+        );
+      case Stats.routename:
+        return new DrawerRoute(
+          builder: (_) => new Stats(),
+          settings: settings
         );
     }
     assert(false);

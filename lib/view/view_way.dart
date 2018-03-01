@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:klymbr/view/drawer.dart' show LocalDrawer;
 import 'dart:async';
-import 'package:klymbr/models/data.dart';
 import 'dart:convert';
 import 'package:klymbr/data.dart';
 
@@ -262,15 +261,14 @@ class _ClimbWaysState extends State<ClimbWays> {
   @override
   Widget build(BuildContext context) {
     return new Scaffold(
-      drawer: new LocalDrawer(localRoute: "/"),
-      appBar: new AppBar(title: new Text("Sélection de voie")),
+      drawer: new LocalDrawer(localRoute: "/ways"),
+      appBar: new AppBar(title: const Text("Sélection de voie")),
       body: new SingleChildScrollView(
         child: new Container(
-            margin: const EdgeInsets.all(24.0),
+            margin: const EdgeInsets.all(22.0),
             child: new FutureBuilder(
                 future: _demoItems,
                 builder: (BuildContext context, AsyncSnapshot<List> snapshot) {
-                  debugPrint(snapshot.data.toString());
                   switch (snapshot.connectionState) {
                     case ConnectionState.none:
                       return new ExpansionPanelList();

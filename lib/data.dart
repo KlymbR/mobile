@@ -1,4 +1,4 @@
-String personaldata = '''
+const String personaldata = '''
 {
 "firstname": "Kevin",
 "lastname": "Barre",
@@ -7,23 +7,38 @@ String personaldata = '''
 "birthday":  {\"\$date\": 1512980682785},
 "licenceNbr": "4567890",
 "licences": [
-{
-"clubname": "Toto's club",
-"clubnb": "123123",
-"fednb": "1210",
-"enddate": {\"\$date\": 1512980682785},
-"status": "Climlbing n°5"
-}
+  {
+    "clubname": "Toto's club",
+    "clubnb": "123123",
+    "fednb": "1210",
+    "enddate": {\"\$date\": 1512980682785},
+    "status": "Actif"
+  },
+  {
+    "clubname": "Jacquie club",
+    "clubnb": "696969",
+    "fednb": "1210",
+    "enddate": {\"\$date\": 1512980682785},
+    "status": "Actif"
+  },
+  {
+    "clubname": "Michel club",
+    "clubnb": "171717",
+    "fednb": "1216",
+    "enddate": {\"\$date\": 1512980682785},
+    "status": "Désactivé"
+  }
 ],
 "address": {
-"rue": "Rue du stade",
+"number": "6",
+"way": "Rue du stade",
 "postalcode": "04100",
 "city": "Manosque"
 }
 }
 ''';
 
-String climbways = '''
+const String climbways = '''
 {
     "ways": [
      {
@@ -148,4 +163,9 @@ String climbways = '''
      }
     ]
 }
+''';
+
+
+const String blueTooth = '''
+
 ''';

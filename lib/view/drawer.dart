@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:klymbr/network/client.dart';
-import 'package:klymbr/models/data.dart' show DataUser;
+import 'package:klymbr/models/data.dart' show DataUser, Address, Licences;
 import 'package:klymbr/models/fileio.dart' show Storage;
 import 'package:klymbr/data.dart' show personaldata;
+import 'package:qrcode_reader/QRCodeReader.dart';
 import 'dart:convert';
 
 class LocalDrawer extends StatefulWidget {
@@ -27,11 +27,11 @@ class _LocalDrawerState extends State<LocalDrawer> {
                 'images/daftpunk.jpg',
               ),
             ),
-            onDetailsPressed: (){
+            onDetailsPressed: () {
 //              if (widget.localRoute == "/")
 //                Navigator.pop(context);
 //              else
-                Navigator.pushReplacementNamed(context, "/");
+              Navigator.pushReplacementNamed(context, "/");
             },
           ),
           new ListTile(
@@ -54,7 +54,9 @@ class _LocalDrawerState extends State<LocalDrawer> {
 //        date de validité de la carte, salles de sports auxquelles l'utilisateur a accès
           new ListTile(
             title: const Text('Stats'),
-            onTap: () {},
+            onTap: () {
+              Navigator.pushNamed(context, "/stats");
+            },
           ),
 //          Score Personel par voie
 //          Best Scores par voie
@@ -68,24 +70,54 @@ class _LocalDrawerState extends State<LocalDrawer> {
 //              print(response.toString());
 //                DataUser user = new DataUser.fromJson(response);
 
-              DataUser user = new DataUser.fromWebJson(JSON.decode(personaldata));
-              print(user.toJson());
-              Storage st =  new Storage("userdata");
-              st.writeJson(user);
-              st.readJson().then((Map info) {
-                print(info.toString());
-                print(new DataUser.fromJson(info));
+              DataUser user =
+                  new DataUser.fromWebJson(JSON.decode(personaldata));
+              
+              Address address = new Address.fromJson((JSON.decode(personaldata)
+                  as Map<String, dynamic>)["address"]);
+
+              Iterable<Licences> licences = (JSON.decode(personaldata)
+                      as Map<String, dynamic>)["licences"]
+                  .map((Map<String, dynamic> data) =>
+                      new Licences.fromWebJson(data));
+
+//              print(licences);
+              print("user avant ecriture");
+//              print(address.toJson());
+//              print(user.toJson());
+
+              new Storage("userlicences")
+                ..write(licences
+                    .map((Licences licence) => licence.toJson())
+                    .toList())
+                ..readListJson().then((List<Map<String, dynamic>> info) {
+                  print("Info list after read $info");
+                  print(info.map((Map<String, dynamic> data) =>
+                      new Licences.fromJson(data)));
+                });
+
+              new Storage("userdata")
+                ..writeJson(user)
+                ..readJson().then((Map info) {
+                  print("lecture du json");
+                  print(info.toString());
+                  print(new DataUser.fromJson(info));
+                });
+              new Storage("useraddress")
+                ..writeJson(address)
+                ..readJson().then((Map info) {
+                  print(info.toString());
+                  print(new Address.fromJson(info));
+                });
+
+              new QRCodeReader()
+                  .setAutoFocusIntervalInMs(200)
+                  .setForceAutoFocus(true)
+                  .setTorchEnabled(true)
+                  .setHandlePermissions(true)
+                  .setExecuteAfterPermissionGranted(true)
+                  .scan().then((String url) async {
               });
-
-
-//              new QRCodeReader()
-//                  .setAutoFocusIntervalInMs(200)
-//                  .setForceAutoFocus(true)
-//                  .setTorchEnabled(true)
-//                  .setHandlePermissions(true)
-//                  .setExecuteAfterPermissionGranted(true)
-//                  .scan().then((String url) async {
-//              });
             },
           )
         ],
