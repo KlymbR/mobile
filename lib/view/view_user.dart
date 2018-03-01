@@ -312,7 +312,7 @@ class __UserFormFieldState extends State<_UserFormField> {
             child: new _DateTimePicker(
 //            icon: const Icon(Icons.confirmation_number),
               labelText: 'Date de naissance',
-              selectedDate: _user == null ? new DateTime.now() : _user.birthday,
+              selectedDate: _user.birthday,
               selectDate: (DateTime date) {
                 setState(() {
 //                _birthDate = date;
@@ -448,36 +448,36 @@ class __UserFormFieldState extends State<_UserFormField> {
               ],
             ),
           ),
-          new Container(
-            child: new FutureBuilder(
-                future: _expensionItems,
-                builder: (BuildContext context, AsyncSnapshot<List> snapshot) {
-                  switch (snapshot.connectionState) {
-                    case ConnectionState.none:
-                      return new ExpansionPanelList();
-                    case ConnectionState.waiting:
-                      return new ExpansionPanelList();
-                    default:
-                      print(snapshot.data);
-                      return new ExpansionPanelList(
-                        expansionCallback: (int index, bool isExpended) {
-                          setState(() {
-                            snapshot.data[index].isExpanded = !isExpended;
-                          });
-                        },
-                        children: snapshot.data == null
-                            ? const <ExpansionPanel>[]
-                            : snapshot.data.map((ExpantionItem<dynamic> item) {
-                                print("Expention = ${item.name}");
-                                return new ExpansionPanel(
-                                    isExpanded: item.isExpanded,
-                                    headerBuilder: item.headerBuilder,
-                                    body: item.builder(item));
-                              }).toList(),
-                      );
-                  }
-                }),
-          ),
+//          new Container(
+//            child: new FutureBuilder(
+//                future: _expensionItems,
+//                builder: (BuildContext context, AsyncSnapshot<List> snapshot) {
+//                  switch (snapshot.connectionState) {
+//                    case ConnectionState.none:
+//                      return new ExpansionPanelList();
+//                    case ConnectionState.waiting:
+//                      return new ExpansionPanelList();
+//                    default:
+//                      print(snapshot.data);
+//                      return new ExpansionPanelList(
+//                        expansionCallback: (int index, bool isExpended) {
+//                          setState(() {
+//                            snapshot.data[index].isExpanded = !isExpended;
+//                          });
+//                        },
+//                        children: snapshot.data == null
+//                            ? const <ExpansionPanel>[]
+//                            : snapshot.data.map((ExpantionItem<dynamic> item) {
+//                                print("Expention = ${item.name}");
+//                                return new ExpansionPanel(
+//                                    isExpanded: item.isExpanded,
+//                                    headerBuilder: item.headerBuilder,
+//                                    body: item.builder(item));
+//                              }).toList(),
+//                      );
+//                  }
+//                }),
+//          ),
           new Container(
             padding: const EdgeInsets.only(top: 20.0),
             child: new Text('* champ obligatoire',
