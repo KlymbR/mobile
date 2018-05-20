@@ -13,124 +13,104 @@ class DataImplement {
 }
 
 class Licences implements DataImplement {
-  String clubname, clubnb, fednb, status;
-  DateTime enddate;
+  String clubName, licenseNbr, clubId, status, fedId;
+  DateTime endDate;
 
   Licences()
-      : clubname = "",
-        clubnb = "",
-        fednb = "",
+      : clubName = "",
+        licenseNbr = "",
+        clubId = "",
         status = "",
-        enddate = new DateTime.now();
+        fedId = "",
+        endDate = new DateTime.now();
 
-  Licences.init(
-      this.clubname, this.clubnb, this.fednb, this.status, this.enddate);
+  Licences.init(this.clubName, this.licenseNbr, this.clubId, this.status,
+      this.fedId, this.endDate);
 
   factory Licences.fromJson(Map<String, dynamic> data) {
     return data == null
         ? null
-        : new Licences.init(data["clubname"], data["clubnb"], data["fednb"],
-            data["status"], DateTime.parse(data["enddate"]));
+        : new Licences.init(data["clubname"], data["licenseNbr"], data["fednb"],
+            data["status"], data["fedId"], DateTime.parse(data["endDate"]));
   }
 
-  factory Licences.fromWebJson(Map<String, dynamic> data) {
-    return data == null
-        ? null
-        : new Licences.init(
-            data["clubname"],
-            data["clubnb"],
-            data["fednb"],
-            data["status"],
-            new DateTime.fromMillisecondsSinceEpoch(data["enddate"]["\$date"]));
-  }
-
-  String toString() => "Licence $clubname $clubnb, $fednb, $status";
+  String toString() =>
+      "Licence $clubName $licenseNbr, $clubId, $status, $fedId, $endDate";
 
   Map<String, dynamic> toJson() => {
-        "clubname": clubname,
-        "clubnb": clubnb,
-        "fednb": fednb,
+        "clubName": clubName,
+        "licenseNbr": licenseNbr,
+        "clubId": clubId,
         "status": status,
-        "enddate": enddate.toString()
+        "fedId": fedId,
+        "endDate": endDate.toString()
       };
 }
 
 class Address implements DataImplement {
-  String way, postalcode, city, number;
+  String street, city;
+  int number, postalCode;
 
   Address()
-      : way = "",
-        postalcode = "",
+      : street = "",
+        postalCode = 0,
         city = "",
-        number = "";
+        number = 0;
 
-  Address.init(this.number, this.way, this.postalcode, this.city)
-      : assert(way != null),
+  Address.init(this.number, this.street, this.postalCode, this.city)
+      : assert(street != null),
         assert(number != null),
-        assert(postalcode != null),
+        assert(postalCode != null),
         assert(city != null);
 
   factory Address.fromJson(Map<String, dynamic> data) {
     return data == null
         ? null
         : new Address.init(
-            data["number"], data["way"], data["postalcode"], data["city"]);
+            data["number"], data["street"], data["postalCode"], data["city"]);
   }
 
-  String toString() => "Live at $number $way $postalcode $city";
+  String toString() => "Live at $number $street $postalCode $city";
 
-  Map<String, dynamic> toJson() =>
-      {"way": way, "postalcode": postalcode, "city": city, "number": number};
+  Map<String, dynamic> toJson() => {
+        "street": street,
+        "postalCode": postalCode,
+        "city": city,
+        "number": number
+      };
 }
 
 class DataUser implements DataImplement {
-  String firstName, lastname, phone, licenceNbr, genre;
-  DateTime birthday;
+  String email, firstName, lastName, phone, licenceNbr;
+  DateTime birthdate;
+  int gender;
 
   DataUser()
-      : birthday = new DateTime.now(),
-        genre = "Monsieur",
-        licenceNbr = "",
-        lastname = "",
+      : birthdate = new DateTime.now(),
+        gender = 1,
+        lastName = "",
         phone = "",
-        firstName = "";
+        firstName = "",
+        licenceNbr = "";
 
-  DataUser.init(this.firstName, this.lastname, this.phone, this.genre,
-      this.licenceNbr, this.birthday);
-
-  factory DataUser.fromWebJson(Map<String, dynamic> data) {
-    return data == null
-        ? null
-        : new DataUser.init(
-            data['firstname'],
-            data['lastname'],
-            data['phone'],
-            data['genre'],
-            data['licenceNbr'],
-            new DateTime.fromMillisecondsSinceEpoch(
-                data['birthday']['\$date']));
-  }
+  DataUser.init(this.email, this.firstName, this.lastName, this.phone, this.gender,
+      this.birthdate, this.licenceNbr);
 
   factory DataUser.fromJson(Map<String, dynamic> data) {
     return data == null
         ? null
-        : new DataUser.init(
-            data['firstname'],
-            data['lastname'],
-            data['phone'],
-            data['genre'],
-            data['licenceNbr'],
-            DateTime.parse(data['birthday']));
+        : new DataUser.init(data['email'], data['firstName'], data['lastName'], data['phone'],
+            data['gender'], DateTime.parse(data['birthdate']), data['licenceNbr']);
   }
 
-  String toString() => "User name $lastname de sex $genre";
+  String toString() => "User name $lastName de sex $gender";
 
   Map<String, dynamic> toJson() => {
-        "firstname": firstName,
-        "lastname": lastname,
+        "email": email,
+        "firstName": firstName,
+        "lastName": lastName,
         "phone": phone,
-        "birthday": birthday.toString(),
-        "genre": genre,
-        "licenceNbr": licenceNbr
+        "birthdate": birthdate.toString(),
+        "gender": gender,
       };
 }

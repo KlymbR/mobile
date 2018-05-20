@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:klymbr/network/client.dart';
 import 'package:klymbr/view/drawer.dart' show LocalDrawer;
 import 'dart:async';
 import 'dart:convert';
@@ -161,21 +162,27 @@ class ClimbWays extends StatefulWidget {
 class _ClimbWaysState extends State<ClimbWays> {
   Future<List<DemoItem<dynamic>>> _demoItems;
 
-  Future<List<DemoItem<dynamic>>> get getDemoItem {
+  Future<List<DemoItem<dynamic>>> get getDemoItem async {
     List<DemoItem<dynamic>> demoItems = new List();
+
+//    Connection connectionClient = new Connection();
+//    List<Map<String, dynamic>> climbdata = await connectionClient.getJson("/path/all/");
+
     List<Map<String, dynamic>> climbdata =
-        (JSON.decode(climbways) as Map<String, dynamic>)["ways"];
+        (JSON.decode(serverways) as Map<String, dynamic>)["result"];
+
 
     climbdata.forEach((Map<String, dynamic> data) {
-      _Access _access = data["disponibility"] == "Libre"
+      _Access _access = data["path_free"] == true
           ? _Access.Free
-          : data["disponibility"] == "Occupé"
+          : data["path_free"] == false
               ? _Access.Occupied
               : _Access.Climbing;
+
       demoItems.add(new DemoItem<String>(
-        name: "Voie n°" + data["wayNbr"].toString(),
-        value: 'Difficulté ' + data["difficulty"],
-        hint: data["disponibility"],
+        name: "Voie n°" + data["path_id"].toString(),
+        value: 'Difficulté ' + data["path_difficulty"].toString(),
+        hint: data["path_free"].toString(),
         valueToString: (String value) => value,
         builder: (DemoItem<String> item) {
           void close() {
@@ -193,7 +200,16 @@ class _ClimbWaysState extends State<ClimbWays> {
                   onSave: () {
                     Form.of(context).save();
                     item.value =
-                        "En grimpe sur la voie " + data["wayNbr"].toString();
+                        "En grimpe sur la voie " + data["path_id"].toString();
+//                    verifier si la voie est deja prise
+//                    post sur 3001/path/free
+//                        {
+//                          "path_id": 1,
+//                          "path_free": false
+//                        }
+//                    Connection connectionClient = new Connection();
+//                    connectionClient.postRequest("/path/free", {"path_id": int.parse(
+//                        data["path_id"]), "path_free": false});
                     close();
                   },
                   onCancel: () {
@@ -210,35 +226,37 @@ class _ClimbWaysState extends State<ClimbWays> {
                             crossAxisAlignment: CrossAxisAlignment.center,
                             children: <Widget>[
                               new Text('Meilleur Score ' +
-                                  data["bestTime"]["time"].toString() +
+                                  data["best_time"].toString() +
                                   "s"),
                               const SizedBox(height: 16.0),
-                              new Text(data["bestTime"]["firstname"] +
+                              new Text(data["best_firstName"].toString() +
                                   " " +
-                                  data["bestTime"]["lastname"]),
+                                  data["best_lastName"].toString()),
                               const SizedBox(height: 16.0),
-                              new Text('Le ' +
-                                  new DateTime.fromMillisecondsSinceEpoch(
-                                          data["bestTime"]["\$date"])
-                                      .toString()),
+// pas de date pour le score ?
+//                              new Text('Le ' +
+//                                  DateTime.parse(
+//                                      wdata["bestTime"])
+//                                      .toString()),
                             ],
                           )),
                           const SizedBox(width: 16.0),
-                          new Expanded(
-                              child: new Column(
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.spaceBetween,
-                                  crossAxisAlignment: CrossAxisAlignment.center,
-                                  children: <Widget>[
-                                new Text('Meilleur Score Personel de ' +
-                                    data["personaBestTime"]["time"].toString() +
-                                    "s"),
-                                const SizedBox(height: 16.0),
-                                new Text(
-                                    new DateTime.fromMillisecondsSinceEpoch(
-                                            data["personaBestTime"]["\$date"])
-                                        .toString()),
-                              ])),
+// pas de score personel
+//                          new Expanded(
+//                              child: new Column(
+//                                  mainAxisAlignment:
+//                                      MainAxisAlignment.spaceBetween,
+//                                  crossAxisAlignment: CrossAxisAlignment.center,
+//                                  children: <Widget>[
+//                                new Text('Meilleur Score Personel de ' +
+//                                    wdata["personaBestTime"]["time"].toString() +
+//                                    "s"),
+//                                const SizedBox(height: 16.0),
+//                                new Text(
+//                                    DateTime.parse(
+//                                        wdata["personaBestTime"])
+//                                        .toString()),
+//                              ])),
                         ],
                       )),
                 );
@@ -281,7 +299,7 @@ class _ClimbWaysState extends State<ClimbWays> {
                               snapshot.data[index].isExpanded = !isExpended;
                             });
                           },
-                          children: snapshot.data.map((DemoItem<dynamic> item) {
+                          children: snapshot.data.map((DemoItem<dynamic> item) { // ignore: strong_mode_uses_dynamic_as_bottom
                             return new ExpansionPanel(
                                 isExpanded: item.isExpanded,
                                 headerBuilder: item.headerBuilder,

@@ -14,7 +14,6 @@ class HeaderWithHint extends StatelessWidget {
   Widget build(BuildContext context) {
     final ThemeData theme = Theme.of(context);
     final TextTheme textTheme = theme.textTheme;
-    print("In header");
 
     return new Row(children: <Widget>[
       new Expanded(
@@ -53,7 +52,6 @@ class ExpantionItem<T> {
   bool isExpanded = false;
 
   ExpansionPanelHeaderBuilder get headerBuilder {
-    print("In Expention");
     return (BuildContext context, bool isExpanded) {
       return new HeaderWithHint(
           name: name,

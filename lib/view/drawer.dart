@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:klymbr/models/data.dart' show DataUser, Address, Licences;
 import 'package:klymbr/models/fileio.dart' show Storage;
-import 'package:klymbr/data.dart' show personaldata;
+import 'package:klymbr/data.dart' show personaldata, serverdata;
 import 'package:qrcode_reader/QRCodeReader.dart';
 import 'dart:convert';
 
@@ -31,6 +31,13 @@ class _LocalDrawerState extends State<LocalDrawer> {
 //              if (widget.localRoute == "/")
 //                Navigator.pop(context);
 //              else
+              Navigator.pushReplacementNamed(context, "/home");
+            },
+          ),
+          new ListTile(
+//            leading: const Icon(Icons.navigate_next),
+            title: const Text('Déconnection'),
+            onTap: () {
               Navigator.pushReplacementNamed(context, "/");
             },
           ),
@@ -71,7 +78,7 @@ class _LocalDrawerState extends State<LocalDrawer> {
 //                DataUser user = new DataUser.fromJson(response);
 
               DataUser user =
-                  new DataUser.fromWebJson(JSON.decode(personaldata));
+                  new DataUser.fromJson(JSON.decode(serverdata));
               
               Address address = new Address.fromJson((JSON.decode(personaldata)
                   as Map<String, dynamic>)["address"]);
@@ -79,7 +86,7 @@ class _LocalDrawerState extends State<LocalDrawer> {
               Iterable<Licences> licences = (JSON.decode(personaldata)
                       as Map<String, dynamic>)["licences"]
                   .map((Map<String, dynamic> data) =>
-                      new Licences.fromWebJson(data));
+                      new Licences.fromJson(data));
 
 //              print(licences);
               print("user avant ecriture");

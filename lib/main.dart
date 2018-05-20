@@ -3,6 +3,7 @@ import 'package:klymbr/view/view_way.dart';
 import 'package:klymbr/view/view_user.dart' show UserView;
 import 'package:klymbr/view/view_map.dart' show MapView;
 import 'package:klymbr/view/view_stats.dart' show Stats;
+import 'package:klymbr/view/view_login.dart' show LoginPage;
 import 'package:klymbr/example/contacts_demo.dart';
 
 void main() {
@@ -12,6 +13,7 @@ void main() {
 class DrawerRoute<T> extends MaterialPageRoute<T> {
   DrawerRoute({WidgetBuilder builder, RouteSettings settings})
       : super(builder: builder, settings: settings);
+
   @override
   Widget buildTransitions(BuildContext context, Animation<double> animation,
       Animation<double> secondaryAnimation, Widget child) {
@@ -26,8 +28,10 @@ class MyApp extends StatelessWidget {
   final Brightness _brightness = Brightness.light;
 
   DrawerRoute _routeTo(RouteSettings settings) {
-//    settings.name
     switch (settings.name) {
+      case LoginPage.routename:
+        return new DrawerRoute(
+            builder: (_) => new LoginPage(), settings: settings);
       case UserView.routeWay:
         return new DrawerRoute(
           builder: (_) => new UserView(),
@@ -39,10 +43,7 @@ class MyApp extends StatelessWidget {
           settings: settings,
         );
       case Stats.routename:
-        return new DrawerRoute(
-          builder: (_) => new Stats(),
-          settings: settings
-        );
+        return new DrawerRoute(builder: (_) => new Stats(), settings: settings);
     }
     assert(false);
     return null;
@@ -55,7 +56,7 @@ class MyApp extends StatelessWidget {
       routes: <String, WidgetBuilder>{
         '/b': (BuildContext context) => new ContactsDemo(),
         '/map': (BuildContext context) => new MapView(),
-//        '/a': (BuildContext context) => new ,
+        //'/': (BuildContext context) => new LoginPage(),
       },
       theme: new ThemeData(
         primarySwatch: this._colorapp,

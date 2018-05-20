@@ -1,3 +1,42 @@
+String tokenGlobal;
+
+
+const String serverdata = '''
+{  
+   "success":true,
+   "result":{  
+      "address":{  
+         "number":43,
+         "street":"totoStreet",
+         "postalCode":78800,
+         "city":"Houilles"
+      },
+      "licenses":[  
+         {  
+            "licenseNbr":"12343",
+            "clubName":"totoScalade",
+            "clubId":"1",
+            "fedId":"1",
+            "endDate":"1994-06-28",
+            "status":"1"
+         }
+      ],
+      "_id":"5af3c703c59ac52f7a4c2ca7",
+      "id":"1",
+      "firstName":"Avel",
+      "lastName":"Docquin",
+      "email":"adocquin@outlook.com",
+      "phone":"624350681",
+      "gender":1,
+      "birthdate":"1994-06-28T00:00:00.000Z",
+      "isAdmin":false,
+      "hashPassword":"\$2a\$10\$ypXs7ilQ9.qFTS63uQCOSeq5R1fdIXIILdwg.mBBiw3Wm4.9FNHFa",
+      "createdDate":"2018-05-10T04:13:55.566Z",
+      "__v":0
+   }
+}
+''';
+
 const String personaldata = '''
 {
 "firstname": "Kevin",
@@ -35,6 +74,45 @@ const String personaldata = '''
 "postalcode": "04100",
 "city": "Manosque"
 }
+}
+''';
+
+const String serverways = '''
+{
+"success":true,
+"result":[
+    {
+      "grips":[
+                {
+                "grip_id":1,
+                "grip_data":234,
+                "grip_on":true
+                },
+                {
+                "grip_id":2,
+                "grip_data":234,
+                "grip_on":true
+                }
+              ],
+        "_id":"5a8336aa70af9206947347fe",
+        "path_id":1,
+        "path_free":true,
+        "path_difficulty":"6A"
+    }
+  ]
+}
+''';
+
+const String serverstats = '''
+{  
+    "_id": "5af353eec1fcd600c8bcdfc2",  
+    "path_id": 1,  
+    "path_difficulty": "6A",  
+    "average_time": 76,  
+    "best_time": 53,  
+    "best_firstName": "Sofiane",  
+    "best_lastName": "Zermani",  
+    "__v": 0  
 }
 ''';
 
@@ -164,6 +242,13 @@ const String climbways = '''
     ]
 }
 ''';
+
+
+const String dataMap = """
+{
+
+}
+""";
 
 
 const String blueTooth = '''

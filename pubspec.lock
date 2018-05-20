@@ -78,6 +78,13 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "0.14.1"
+  cupertino_icons:
+    dependency: "direct main"
+    description:
+      name: cupertino_icons
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "0.1.2"
   flutter:
     dependency: "direct main"
     description: flutter
@@ -88,6 +95,13 @@ packages:
     description: flutter
     source: sdk
     version: "0.0.0"
+  font_awesome_flutter:
+    dependency: "direct main"
+    description:
+      name: font_awesome_flutter
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "6.0.0"
   front_end:
     dependency: transitive
     description:
@@ -172,6 +186,13 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "0.11.3+1"
+  map_view:
+    dependency: "direct main"
+    description:
+      name: map_view
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "0.0.10"
   matcher:
     dependency: transitive
     description:
@@ -373,6 +394,13 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "1.1.5"
+  uri:
+    dependency: "direct main"
+    description:
+      name: uri
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "0.11.2"
   utf:
     dependency: transitive
     description:
@@ -409,4 +437,4 @@ packages:
     source: hosted
     version: "2.1.13"
 sdks:
-  dart: ">=2.0.0-dev.23.0 <=2.0.0-edge.0d5cf900b021bf5c9fa593ffa12b15bcd1cc5fe0"
+  dart: ">=2.0.0-dev.28.0 <=2.0.0-edge.0d5cf900b021bf5c9fa593ffa12b15bcd1cc5fe0"
