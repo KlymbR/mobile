@@ -1,5 +1,7 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
+import 'package:klymbr/data.dart';
+import 'package:klymbr/network/client.dart';
 import 'package:map_view/map_view.dart' as GMapView;
 
 const String API_KEY = "";
@@ -43,12 +45,14 @@ class MapView extends StatefulWidget {
 // add map code
 
 class _MapViewState extends State<MapView> {
-  GMapView.MapView mapView = new GMapView.MapView() ;
+  GMapView.MapView mapView = new GMapView.MapView();
+
   GMapView.CameraPosition cameraPosition;
-  var compositeSubscription = new CompositeSubscription();
+  CompositeSubscription compositeSubscription = new CompositeSubscription();
   var staticMapProvider = new GMapView.StaticMapProvider(API_KEY);
   Uri staticMapUri;
-
+  List<Widget> title = new List();
+  List<GMapView.Marker> maker = new List();
 
   showMap() {
     mapView.show(
@@ -56,23 +60,15 @@ class _MapViewState extends State<MapView> {
             mapViewType: GMapView.MapViewType.normal,
             showUserLocation: true,
             initialCameraPosition: new GMapView.CameraPosition(
-                new GMapView.Location(48.8534, 2.3488), 14.0),
+                new GMapView.Location(48.8534, 2.3488), 12.0),
             title: "Trouver une salle de sport"),
-        toolbarActions: [new GMapView.ToolbarAction("Close", 1)]
-    );
+        toolbarActions: [new GMapView.ToolbarAction("Close", 1)]);
 
-    var sub = mapView.onMapReady.listen((_) {
-      mapView.setMarkers(<GMapView.Marker>[
-        new GMapView.Marker("1", "Number 1", 48.8534, 2.3488, color: Colors.blue),
-        new GMapView.Marker("2", "Number 2", 48.842886, 2.357254),
-      ]);
-      mapView.addMarker(new GMapView.Marker("3", "Number 3", 48.808811, 2.357986,
-          color: Colors.purple));
-
-      mapView.zoomToFit(padding: 100);
+    StreamSubscription sub = mapView.onMapReady.listen((_) {
+      mapView.setMarkers(maker);
     });
-    compositeSubscription.add(sub);
 
+    compositeSubscription.add(sub);
     sub = mapView.onLocationUpdated
         .listen((location) => print("Location updated $location"));
     compositeSubscription.add(sub);
@@ -117,12 +113,44 @@ class _MapViewState extends State<MapView> {
 
   @override
   initState() {
+    print("map connection");
     GMapView.MapView.setApiKey(API_KEY);
+    Connection connectionClient = new Connection();
+    connectionClient.token = tokenGlobal;
+    connectionClient
+        .getJson("/climbingRoom/")
+        .then((Map<String, dynamic> data) {
+      data["result"].forEach((Map<String, dynamic> climb) {
+        title.add(new ListTile(
+          leading: const Icon(Icons.map),
+          title: new Text(climb["title"].toString()),
+        ));
+        print("${climb["latitude"]} ${climb["latitude"].runtimeType}");
+        maker.add(new GMapView.Marker(climb["_id"], climb["title"],
+            climb["latitude"].toDouble(), climb["longitude"].toDouble()));
+      });
+    })
+        .catchError((exeption) {
+      print(showDialog<String>(
+          context: context,
+          child: new AlertDialog(
+              content:
+              new Text("Problèmes\n serveur"),
+              actions: <Widget>[
+                new FlatButton(
+                    child: const Text('OK'),
+                    onPressed: () {
+                      Navigator.pushReplacementNamed(
+                          context, "/home");
+                    })
+              ])));
+    });;
     super.initState();
-    cameraPosition = new GMapView.CameraPosition(new GMapView.Location(48.8534, 2.3488), 12.0);
+
     staticMapUri = staticMapProvider.getStaticUri(
         new GMapView.Location(48.8534, 2.3488), 12,
         width: 900, height: 400);
+
   }
 
   @override
@@ -155,37 +183,14 @@ class _MapViewState extends State<MapView> {
               ],
             ),
           ),
-          new Expanded(child:
-          new CustomScrollView(
+          new Expanded(
+              child: new CustomScrollView(
             shrinkWrap: true,
             slivers: <Widget>[
               new SliverPadding(
                 padding: const EdgeInsets.all(20.0),
                 sliver: new SliverList(
-                  delegate: new SliverChildListDelegate(
-                    <Widget>[
-                      new ListTile(
-                        leading: const Icon(Icons.map),
-                        title: const Text('Adresse numero 1'),
-                      ),
-                      new ListTile(
-                        leading: const Icon(Icons.map),
-                        title: const Text('Adresse numero 2'),
-                      ),
-                      new ListTile(
-                        leading: const Icon(Icons.map),
-                        title: const Text('Adresse numero 3'),
-                      ),
-                      new ListTile(
-                        leading: const Icon(Icons.map),
-                        title: const Text('Adresse numero 4'),
-                      ),
-                      new ListTile(
-                        leading: const Icon(Icons.map),
-                        title: const Text('Adresse numero 5'),
-                      ),
-                    ],
-                  ),
+                  delegate: new SliverChildListDelegate(title),
                 ),
               ),
             ],

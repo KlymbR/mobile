@@ -56,7 +56,6 @@ class MyApp extends StatelessWidget {
       routes: <String, WidgetBuilder>{
         '/b': (BuildContext context) => new ContactsDemo(),
         '/map': (BuildContext context) => new MapView(),
-        //'/': (BuildContext context) => new LoginPage(),
       },
       theme: new ThemeData(
         primarySwatch: this._colorapp,

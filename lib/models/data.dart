@@ -112,5 +112,6 @@ class DataUser implements DataImplement {
         "phone": phone,
         "birthdate": birthdate.toString(),
         "gender": gender,
+        "licenceNbr": licenceNbr
       };
 }

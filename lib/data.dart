@@ -110,9 +110,9 @@ const String serverstats = '''
     "path_difficulty": "6A",  
     "average_time": 76,  
     "best_time": 53,  
-    "best_firstName": "Sofiane",  
-    "best_lastName": "Zermani",  
-    "__v": 0  
+    "best_firstName": "Sofiane",
+    "best_lastName": "Zermani",
+    "__v": 0
 }
 ''';
 
@@ -246,7 +246,17 @@ const String climbways = '''
 
 const String dataMap = """
 {
-
+    "success": true,
+    "result":
+    [  
+        {
+            "_id": "5ae9bacba0617f3a64b1c67f",  
+	        "title":"totoScalade",  
+	        "latitude":48.842886,  
+	        "longitude":2.357254,  
+            "__v": 0
+        }
+    ]  
 }
 """;
 

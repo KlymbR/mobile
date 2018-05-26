@@ -165,24 +165,36 @@ class _ClimbWaysState extends State<ClimbWays> {
   Future<List<DemoItem<dynamic>>> get getDemoItem async {
     List<DemoItem<dynamic>> demoItems = new List();
 
-//    Connection connectionClient = new Connection();
-//    List<Map<String, dynamic>> climbdata = await connectionClient.getJson("/path/all/");
+    Connection connectionClient = new Connection();
+    connectionClient.token = tokenGlobal;
+    print("connection");
 
-    List<Map<String, dynamic>> climbdata =
-        (JSON.decode(serverways) as Map<String, dynamic>)["result"];
+    Map<String, dynamic> fulldata =
+        await connectionClient.getJson("/path/all/").catchError((exeption) {
+      print(showDialog<String>(
+          context: context,
+          child: new AlertDialog(
+              content: new Text("Problèmes\n $exeption"),
+              actions: <Widget>[
+                new FlatButton(
+                    child: const Text('OK'),
+                    onPressed: () {
+                      Navigator.pop(context, exeption);
+                    })
+              ])));
+    });
 
-
+    List<Map<String, dynamic>> climbdata = fulldata["result"];
+    print("climbdata $climbdata");
     climbdata.forEach((Map<String, dynamic> data) {
       _Access _access = data["path_free"] == true
           ? _Access.Free
-          : data["path_free"] == false
-              ? _Access.Occupied
-              : _Access.Climbing;
+          : data["path_free"] == false ? _Access.Occupied : _Access.Climbing;
 
       demoItems.add(new DemoItem<String>(
         name: "Voie n°" + data["path_id"].toString(),
         value: 'Difficulté ' + data["path_difficulty"].toString(),
-        hint: data["path_free"].toString(),
+        hint: data["path_free"].toString() == "true" ? "Libre" : "Occupé",
         valueToString: (String value) => value,
         builder: (DemoItem<String> item) {
           void close() {
@@ -201,15 +213,11 @@ class _ClimbWaysState extends State<ClimbWays> {
                     Form.of(context).save();
                     item.value =
                         "En grimpe sur la voie " + data["path_id"].toString();
-//                    verifier si la voie est deja prise
-//                    post sur 3001/path/free
-//                        {
-//                          "path_id": 1,
-//                          "path_free": false
-//                        }
-//                    Connection connectionClient = new Connection();
-//                    connectionClient.postRequest("/path/free", {"path_id": int.parse(
-//                        data["path_id"]), "path_free": false});
+                    connectionClient.postRequest("/path/free", {
+                      "path_id":
+                          int.parse(data["path_id"].toString()),
+                      "path_free": false
+                    });
                     close();
                   },
                   onCancel: () {
@@ -299,7 +307,8 @@ class _ClimbWaysState extends State<ClimbWays> {
                               snapshot.data[index].isExpanded = !isExpended;
                             });
                           },
-                          children: snapshot.data.map((DemoItem<dynamic> item) { // ignore: strong_mode_uses_dynamic_as_bottom
+                          // ignore: strong_mode_uses_dynamic_as_bottom
+                          children: snapshot.data.map((DemoItem<dynamic> item) {
                             return new ExpansionPanel(
                                 isExpanded: item.isExpanded,
                                 headerBuilder: item.headerBuilder,

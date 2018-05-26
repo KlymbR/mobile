@@ -115,7 +115,6 @@ class LoginPageState extends State<LoginPage>
                             textColor: Colors.white,
                             child: _icon,
                             onPressed: () {
-
                               if (_email.text != "" || _password.text != "") {
                                 print("${_email.text} ${_password.text}");
                                 setState(() {
@@ -133,7 +132,6 @@ class LoginPageState extends State<LoginPage>
                                   print(value);
                                   tokenGlobal = value["token"];
                                   connectionClient.token = tokenGlobal;
-
                                   connectionClient
                                       .getJson("/user/")
                                       .then((Map<String, dynamic> value) {
@@ -165,7 +163,6 @@ class LoginPageState extends State<LoginPage>
                                             (Map<String, dynamic> data) =>
                                                 new Licences.fromJson(data)));
                                       });
-
                                     new Storage("userdata")
                                       ..writeJson(user)
                                       ..readJson().then((Map info) {
@@ -181,11 +178,27 @@ class LoginPageState extends State<LoginPage>
                                       });
 
                                     if (tokenGlobal != null) {
-                                      Navigator.pushNamed(context, "/home");
+                                      Navigator.pushReplacementNamed(
+                                          context, "/home");
                                     }
                                   });
-
-
+                                }).catchError((exeption) {
+                                  print(showDialog<String>(
+                                      context: context,
+                                      child: new AlertDialog(
+                                          content:
+                                              new Text("Problèmes\n $exeption"),
+                                          actions: <Widget>[
+                                            new FlatButton(
+                                                child: const Text('OK'),
+                                                onPressed: () {
+                                                  Navigator.pop(
+                                                      context, exeption);
+                                                  _icon = const Icon(
+                                                      FontAwesomeIcons
+                                                          .signInAlt);
+                                                })
+                                          ])));
                                 });
 
 //                              Connection connectionClient = new Connection(

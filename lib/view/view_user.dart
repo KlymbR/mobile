@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:http/http.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:klymbr/data.dart';
 import 'package:klymbr/view/drawer.dart' show LocalDrawer;
 import 'package:klymbr/models/data.dart' show DataUser, Licences, Address;
 import 'package:klymbr/models/fileio.dart' show Storage;
@@ -130,7 +131,7 @@ class __UserFormFieldState extends State<_UserFormField> {
       if (_user != null) {
         _controllerList[0].text = _user.lastName;
         _controllerList[1].text = _user.firstName;
-//        _controllerList[2].text = _user.licenceNbr;
+        _controllerList[2].text = _user.licenceNbr;
         _controllerList[3].text = _user.phone;
         setState(() {
           _userPicture = "images/daftpunk.jpg";
@@ -166,7 +167,34 @@ class __UserFormFieldState extends State<_UserFormField> {
     } else {
       form.save();
       Connection connectionClient = new Connection();
-      connectionClient.patchRequest("/user/update", _user.toJson());
+      connectionClient
+          ..token = tokenGlobal
+          ..patchRequest("/user/update", _user.toJson())
+          .then((Map<String, dynamic> value) {
+        print(showDialog<String>(
+            context: context,
+            child: new AlertDialog(
+                content: new Text("Mis à jour"),
+                actions: <Widget>[
+                  new FlatButton(
+                      child: const Text('OK'),
+                      onPressed: () {
+                        Navigator.pop(context, value.toString());
+                      })
+                ])));
+      }).catchError((exeption) {
+        print(showDialog<String>(
+            context: context,
+            child: new AlertDialog(
+                content: new Text("Problèmes\n $exeption"),
+                actions: <Widget>[
+                  new FlatButton(
+                      child: const Text('OK'),
+                      onPressed: () {
+                        Navigator.pop(context, exeption);
+                      })
+                ])));
+      });
       print(_user.toJson());
       print(_address.toJson());
       showInSnackBar('${_user.lastName}\'s phone number is ${_user.phone}');
@@ -310,13 +338,13 @@ class __UserFormFieldState extends State<_UserFormField> {
               ],
             ),
           ),
-
           new Container(
             alignment: Alignment.center,
             padding: const EdgeInsets.only(right: 12.0, left: 12.0),
             child: new _DateTimePicker(
               labelText: 'Date de naissance',
-              selectedDate: _user.birthdate == null
+              selectedDate:
+              _user.birthdate == null
                   ? new DateTime.now()
                   : _user.birthdate,
               selectedTime: const TimeOfDay(hour: 7, minute: 28),
@@ -328,7 +356,6 @@ class __UserFormFieldState extends State<_UserFormField> {
               selectTime: (TimeOfDay time) {},
             ),
           ),
-
           new Container(
             padding: const EdgeInsets.only(right: 12.0),
             child: new TextFormField(
@@ -350,7 +377,6 @@ class __UserFormFieldState extends State<_UserFormField> {
               validator: _validateLicence,
             ),
           ),
-
           new Container(
             padding: const EdgeInsets.only(right: 12.0),
             child: new TextFormField(
@@ -361,7 +387,7 @@ class __UserFormFieldState extends State<_UserFormField> {
                   labelText: 'Phone Number *',
                   prefixText: '+33'),
               keyboardType: TextInputType.phone,
-              initialValue: _user == null ? "" : _user.phone,
+              initialValue: _user.phone.toString(),
               controller: _controllerList[3],
               onSaved: (String value) {
                 _user.phone = value;
@@ -388,8 +414,7 @@ class __UserFormFieldState extends State<_UserFormField> {
                   ),
                   keyboardType: TextInputType.number,
                   controller: _controllerList[4],
-                  initialValue:
-                      _address == null ? "" : _address.number.toString(),
+                  initialValue: _address.number.toString(),
                   onSaved: (String value) {
                     _address.number = int.parse(value);
                   },
@@ -404,7 +429,7 @@ class __UserFormFieldState extends State<_UserFormField> {
                     labelText: 'Nom de rue',
                   ),
                   controller: _controllerList[5],
-                  initialValue: _address == null ? "" : _address.street,
+                  initialValue: _address.street.toString(),
                   onSaved: (String value) {
                     _address.street = value;
                   },
@@ -439,7 +464,7 @@ class __UserFormFieldState extends State<_UserFormField> {
                     autofocus: true,
                     keyboardType: TextInputType.text,
                     controller: _controllerList[7],
-                    initialValue: _address == null ? "" : _address.city,
+                    initialValue: _address.city == null ? "" : _address.city,
                     onSaved: (String value) {
                       _address.city = value;
                     },
@@ -475,7 +500,6 @@ class __UserFormFieldState extends State<_UserFormField> {
                     case ConnectionState.waiting:
                       return new ExpansionPanelList();
                     default:
-                      print(snapshot.data);
                       return new ExpansionPanelList(
                         expansionCallback: (int index, bool isExpended) {
                           setState(() {
@@ -564,7 +588,7 @@ class _DateTimePicker extends StatelessWidget {
     final DateTime picked = await showDatePicker(
         context: context,
         initialDate: selectedDate,
-        firstDate: new DateTime(2015, 8),
+        firstDate: new DateTime(1800, 8),
         lastDate: new DateTime(2101));
     if (picked != null && picked != selectedDate) selectDate(picked);
   }
