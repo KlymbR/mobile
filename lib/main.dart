@@ -4,7 +4,7 @@ import 'package:klymbr/view/view_user.dart' show UserView;
 import 'package:klymbr/view/view_map.dart' show MapView;
 import 'package:klymbr/view/view_stats.dart' show Stats;
 import 'package:klymbr/view/view_login.dart' show LoginPage;
-import 'package:klymbr/example/contacts_demo.dart';
+// import 'package:klymbr/example/contacts_demo.dart';
 
 void main() {
   runApp(new MyApp());
@@ -52,9 +52,10 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return new MaterialApp(
+      debugShowCheckedModeBanner: false,
       title: this._titleapp,
       routes: <String, WidgetBuilder>{
-        '/b': (BuildContext context) => new ContactsDemo(),
+        // '/b': (BuildContext context) => new ContactsDemo(),
         '/map': (BuildContext context) => new MapView(),
       },
       theme: new ThemeData(

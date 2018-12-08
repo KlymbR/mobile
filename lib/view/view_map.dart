@@ -4,7 +4,7 @@ import 'package:klymbr/data.dart';
 import 'package:klymbr/network/client.dart';
 import 'package:map_view/map_view.dart' as GMapView;
 
-const String API_KEY = "";
+const String API_KEY = "AIzaSyBxKRmMLmwEd3mP7A6378oCgNBiBFyiYr4";
 
 class CompositeSubscription {
   Set<StreamSubscription> _subscriptions = new Set();
@@ -120,7 +120,7 @@ class _MapViewState extends State<MapView> {
     connectionClient
         .getJson("/climbingRoom/")
         .then((Map<String, dynamic> data) {
-      data["result"].forEach((Map<String, dynamic> climb) {
+      data["result"].forEach((dynamic climb) {
         title.add(new ListTile(
           leading: const Icon(Icons.map),
           title: new Text(climb["title"].toString()),

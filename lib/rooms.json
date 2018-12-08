@@ -1,0 +1,413 @@
+[
+  {
+    "_id": "5b0ac7a0f6797f36e47ad219",
+    "title": "Salle de la Rochette",
+    "latitude": 43.8417705,
+    "longitude": 5.7757431,
+    "paths": [
+      {
+        "_id": "5c09017fbf3d4b32d83f5267",
+        "free": true,
+        "difficulty": "8B+",
+        "grips": [
+          {
+            "id": 59,
+            "data": 118,
+            "on": false
+          }
+        ],
+        "color": "#0000FF",
+        "best": {
+          "time": 49.3,
+          "firstname": "Marylène",
+          "lastname": "Faichnie",
+          "id": "5c0901befc13ae1ca9000000"
+        },
+        "average": 56
+      },
+      {
+        "_id": "5c09017fbf3d4b32d83f5268",
+        "free": true,
+        "difficulty": "5B",
+        "grips": [
+          {
+            "id": 39,
+            "data": 170,
+            "on": false
+          },
+          {
+            "id": 59,
+            "data": 226,
+            "on": false
+          },
+          {
+            "id": 16,
+            "data": 103,
+            "on": false
+          },
+          {
+            "id": 74,
+            "data": 88,
+            "on": false
+          },
+          {
+            "id": 93,
+            "data": 117,
+            "on": true
+          },
+          {
+            "id": 62,
+            "data": 107,
+            "on": false
+          }
+        ],
+        "color": "#66ff3d",
+        "best": {
+          "time": 58.41,
+          "firstname": "Anaïs",
+          "lastname": "Mazonowicz",
+          "id": "5c0901befc13ae1ca9000001"
+        }
+      },
+      {
+        "_id": "5c09017fbf3d4b32d83f5269",
+        "free": false,
+        "difficulty": "7C",
+        "grips": [
+          {
+            "id": 28,
+            "data": 204,
+            "on": true
+          },
+          {
+            "id": 8,
+            "data": 159,
+            "on": false
+          }
+        ],
+        "color": "#c7a050",
+        "best": {
+          "time": 57.64,
+          "firstname": "André",
+          "lastname": "Hessenthaler",
+          "id": "5c0901befc13ae1ca9000002"
+        }
+      }
+    ],
+    "__v": 0
+  },
+  {
+    "_id": "5b0ac7cdf6797f36e47ad21a",
+    "title": "ALTISSIMO Montpellier Odysseum",
+    "latitude": 43.6033608,
+    "longitude": 3.918170199999963,
+    "__v": 0
+  },
+  {
+    "_id": "5b0ac7f6f6797f36e47ad21b",
+    "title": "Block'Out Montpellier",
+    "latitude": 43.62973789999999,
+    "longitude": 3.9102265999999872,
+    "__v": 0
+  },
+  {
+    "_id": "5bedf37b141a4d1fbf8b2e6f",
+    "title": "Voltsillam Climbing Gym",
+    "latitude": 52.4000431,
+    "longitude": 4.7642491
+  },
+  {
+    "_id": "5bedf37b141a4d1fbf8b2e70",
+    "title": "Daltfresh Climbing Gym",
+    "latitude": 31.723247,
+    "longitude": 119.597896
+  },
+  {
+    "_id": "5bedf37b141a4d1fbf8b2e71",
+    "title": "Stringtough Climbing Gym",
+    "latitude": 55.7309365,
+    "longitude": 13.1779513
+  },
+  {
+    "_id": "5bedf37b141a4d1fbf8b2e72",
+    "title": "Asoka Climbing Gym",
+    "latitude": 53.3624134,
+    "longitude": 55.9381136
+  },
+  {
+    "_id": "5bedf37b141a4d1fbf8b2e73",
+    "title": "Toughjoyfax Climbing Gym",
+    "latitude": -1.783333,
+    "longitude": 119.466667
+  },
+  {
+    "_id": "5bedf37b141a4d1fbf8b2e74",
+    "title": "It Climbing Gym",
+    "latitude": -6.2176613,
+    "longitude": 106.8679827
+  },
+  {
+    "_id": "5bedf37b141a4d1fbf8b2e75",
+    "title": "Otcom Climbing Gym",
+    "latitude": 43.9763746,
+    "longitude": 4.9052738
+  },
+  {
+    "_id": "5bedf37b141a4d1fbf8b2e76",
+    "title": "Tres-Zap Climbing Gym",
+    "latitude": -6.3624934,
+    "longitude": 106.021195
+  },
+  {
+    "_id": "5bedf37b141a4d1fbf8b2e77",
+    "title": "Tin Climbing Gym",
+    "latitude": -7.572027,
+    "longitude": 112.5125893
+  },
+  {
+    "_id": "5bedf37b141a4d1fbf8b2e78",
+    "title": "Asoka Climbing Gym",
+    "latitude": 30.6616444,
+    "longitude": 114.307275
+  },
+  {
+    "_id": "5bedf37b141a4d1fbf8b2e79",
+    "title": "Kanlam Climbing Gym",
+    "latitude": -22.5459962,
+    "longitude": -55.7321171
+  },
+  {
+    "_id": "5bedf37b141a4d1fbf8b2e7a",
+    "title": "Fix San Climbing Gym",
+    "latitude": 52.5916842,
+    "longitude": 32.7616732
+  },
+  {
+    "_id": "5bedf37b141a4d1fbf8b2e7b",
+    "title": "Prodder Climbing Gym",
+    "latitude": 25.4967308,
+    "longitude": -103.5886258
+  },
+  {
+    "_id": "5bedf37b141a4d1fbf8b2e7c",
+    "title": "Voltsillam Climbing Gym",
+    "latitude": 14.22781,
+    "longitude": 121.369775
+  },
+  {
+    "_id": "5bedf37b141a4d1fbf8b2e7d",
+    "title": "Tampflex Climbing Gym",
+    "latitude": -7.5407175,
+    "longitude": 110.4457241
+  },
+  {
+    "_id": "5bedf37b141a4d1fbf8b2e7e",
+    "title": "Toughjoyfax Climbing Gym",
+    "latitude": 13.8135951,
+    "longitude": 100.4227992
+  },
+  {
+    "_id": "5bedf37b141a4d1fbf8b2e7f",
+    "title": "Redhold Climbing Gym",
+    "latitude": 4.9237913,
+    "longitude": -52.3205637
+  },
+  {
+    "_id": "5bedf37b141a4d1fbf8b2e80",
+    "title": "Lotstring Climbing Gym",
+    "latitude": 64.403043,
+    "longitude": 27.8381469
+  },
+  {
+    "_id": "5bedf37b141a4d1fbf8b2e81",
+    "title": "Matsoft Climbing Gym",
+    "latitude": -7.1066698,
+    "longitude": 110.0196561
+  },
+  {
+    "_id": "5bedf37b141a4d1fbf8b2e82",
+    "title": "Konklux Climbing Gym",
+    "latitude": 41.3922962,
+    "longitude": -8.3323796
+  },
+  {
+    "_id": "5bedf37b141a4d1fbf8b2e83",
+    "title": "Fixflex Climbing Gym",
+    "latitude": 17.0994461,
+    "longitude": 121.6975078
+  },
+  {
+    "_id": "5bedf37b141a4d1fbf8b2e84",
+    "title": "Latlux Climbing Gym",
+    "latitude": -7.6374665,
+    "longitude": 112.8880068
+  },
+  {
+    "_id": "5bedf37b141a4d1fbf8b2e85",
+    "title": "Veribet Climbing Gym",
+    "latitude": 64.2456893,
+    "longitude": 23.8402057
+  },
+  {
+    "_id": "5bedf37b141a4d1fbf8b2e86",
+    "title": "Fintone Climbing Gym",
+    "latitude": 18.4355719,
+    "longitude": -69.9506496
+  },
+  {
+    "_id": "5bedf37b141a4d1fbf8b2e87",
+    "title": "Greenlam Climbing Gym",
+    "latitude": -11.7382104,
+    "longitude": -75.444669
+  },
+  {
+    "_id": "5bedf37b141a4d1fbf8b2e88",
+    "title": "Y-find Climbing Gym",
+    "latitude": -14.72796,
+    "longitude": -70.52285
+  },
+  {
+    "_id": "5bedf37b141a4d1fbf8b2e89",
+    "title": "Wrapsafe Climbing Gym",
+    "latitude": 40.6039378,
+    "longitude": 141.3259605
+  },
+  {
+    "_id": "5bedf37b141a4d1fbf8b2e8a",
+    "title": "Alphazap Climbing Gym",
+    "latitude": 62.0587526,
+    "longitude": 129.7283548
+  },
+  {
+    "_id": "5bedf37b141a4d1fbf8b2e8b",
+    "title": "Andalax Climbing Gym",
+    "latitude": 36.1008689,
+    "longitude": 139.5772452
+  },
+  {
+    "_id": "5bedf37b141a4d1fbf8b2e8c",
+    "title": "Zamit Climbing Gym",
+    "latitude": 41.632769,
+    "longitude": -8.3119724
+  },
+  {
+    "_id": "5bedf37b141a4d1fbf8b2e8d",
+    "title": "Zaam-Dox Climbing Gym",
+    "latitude": -8.0916546,
+    "longitude": 112.5394091
+  },
+  {
+    "_id": "5bedf37b141a4d1fbf8b2e8e",
+    "title": "Sub-Ex Climbing Gym",
+    "latitude": 32.323256,
+    "longitude": 105.96282
+  },
+  {
+    "_id": "5bedf37b141a4d1fbf8b2e8f",
+    "title": "Overhold Climbing Gym",
+    "latitude": -1.3964218,
+    "longitude": -48.4609448
+  },
+  {
+    "_id": "5bedf37b141a4d1fbf8b2e90",
+    "title": "Fix San Climbing Gym",
+    "latitude": 29.5530941,
+    "longitude": 118.9353968
+  },
+  {
+    "_id": "5bedf37b141a4d1fbf8b2e91",
+    "title": "Tampflex Climbing Gym",
+    "latitude": 41.1217553,
+    "longitude": -8.228543
+  },
+  {
+    "_id": "5bedf37b141a4d1fbf8b2e92",
+    "title": "Quo Lux Climbing Gym",
+    "latitude": 7.0878808,
+    "longitude": 79.8986552
+  },
+  {
+    "_id": "5bedf37b141a4d1fbf8b2e93",
+    "title": "Alphazap Climbing Gym",
+    "latitude": 61.6614104,
+    "longitude": 40.2019954
+  },
+  {
+    "_id": "5bedf37b141a4d1fbf8b2e94",
+    "title": "Bamity Climbing Gym",
+    "latitude": 14.6103278,
+    "longitude": 121.0080574
+  },
+  {
+    "_id": "5bedf37b141a4d1fbf8b2e95",
+    "title": "Alphazap Climbing Gym",
+    "latitude": 49.6911273,
+    "longitude": 28.1308882
+  },
+  {
+    "_id": "5bedf37b141a4d1fbf8b2e96",
+    "title": "Tresom Climbing Gym",
+    "latitude": 39.989836,
+    "longitude": 117.274909
+  },
+  {
+    "_id": "5bedf37b141a4d1fbf8b2e97",
+    "title": "Cardify Climbing Gym",
+    "latitude": 13.9567165,
+    "longitude": 122.6045837
+  },
+  {
+    "_id": "5bedf37b141a4d1fbf8b2e98",
+    "title": "Zontrax Climbing Gym",
+    "latitude": 38.021567,
+    "longitude": 114.847075
+  },
+  {
+    "_id": "5bedf37b141a4d1fbf8b2e99",
+    "title": "Opela Climbing Gym",
+    "latitude": 59.3582766,
+    "longitude": 17.8838787
+  },
+  {
+    "_id": "5bedf37b141a4d1fbf8b2e9a",
+    "title": "Home Ing Climbing Gym",
+    "latitude": 7.0394127,
+    "longitude": 125.5131445
+  },
+  {
+    "_id": "5bedf37b141a4d1fbf8b2e9b",
+    "title": "Alpha Climbing Gym",
+    "latitude": 56.6941681,
+    "longitude": 60.8287334
+  },
+  {
+    "_id": "5bedf37b141a4d1fbf8b2e9c",
+    "title": "Alpha Climbing Gym",
+    "latitude": "8.26667",
+    "longitude": "5.83333"
+  },
+  {
+    "_id": "5bedf37b141a4d1fbf8b2e9d",
+    "title": "Gembucket Climbing Gym",
+    "latitude": 45.4726625,
+    "longitude": 4.3812793
+  },
+  {
+    "_id": "5bedf37b141a4d1fbf8b2e9e",
+    "title": "Voltsillam Climbing Gym",
+    "latitude": 37.6092461,
+    "longitude": 61.8643252
+  },
+  {
+    "_id": "5bedf37b141a4d1fbf8b2e9f",
+    "title": "Veribet Climbing Gym",
+    "latitude": 5.4459387,
+    "longitude": 10.0471549
+  },
+  {
+    "_id": "5bedf37b141a4d1fbf8b2ea0",
+    "title": "Ronstring Climbing Gym",
+    "latitude": 49.3649919,
+    "longitude": 18.309005
+  }
+]

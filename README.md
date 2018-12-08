@@ -1,5 +1,8 @@
-# KlymbrApp
+# klymbr
 
-https://www.dartlang.org/guides/language/effective-dart/style
+A new Flutter application.
 
-Application pour l'eip Klymbr epitech
+## Getting Started
+
+For help getting started with Flutter, view our online
+[documentation](https://flutter.io/).

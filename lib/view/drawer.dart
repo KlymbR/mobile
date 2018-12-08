@@ -1,9 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:klymbr/models/data.dart' show DataUser, Address, Licences;
-import 'package:klymbr/models/fileio.dart' show Storage;
-import 'package:klymbr/data.dart' show personaldata, serverdata;
-import 'package:qrcode_reader/QRCodeReader.dart';
-import 'dart:convert';
 
 class LocalDrawer extends StatefulWidget {
   LocalDrawer({Key key, this.localRoute}) : super(key: key);

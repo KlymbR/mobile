@@ -1,8 +1,6 @@
-import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:klymbr/network/client.dart';
-import 'package:qrcode_reader/QRCodeReader.dart' show QRCodeReader;
 import 'package:klymbr/data.dart' show tokenGlobal, serverdata;
 import 'package:klymbr/models/data.dart' show DataUser, Address, Licences;
 import 'package:klymbr/models/fileio.dart' show Storage;
@@ -86,26 +84,26 @@ class LoginPageState extends State<LoginPage>
                           new Padding(
                             padding: const EdgeInsets.only(top: 60.0),
                           ),
-                          new MaterialButton(
-                            height: 50.0,
-                            minWidth: 150.0,
-                            color: Colors.blueGrey,
-                            splashColor: Colors.teal,
-                            textColor: Colors.white,
-                            child: new Icon(Icons.camera),
-                            onPressed: () {
-                              new QRCodeReader()
-                                  .setAutoFocusIntervalInMs(200)
-                                  .setForceAutoFocus(true)
-                                  .setTorchEnabled(true)
-                                  .setHandlePermissions(true)
-                                  .setExecuteAfterPermissionGranted(true)
-                                  .scan()
-                                  .then((String url) async {
-                                setState(() => _email.text = url);
-                              });
-                            },
-                          ),
+//                          new MaterialButton(
+//                            height: 50.0,
+//                            minWidth: 150.0,
+//                            color: Colors.blueGrey,
+//                            splashColor: Colors.teal,
+//                            textColor: Colors.white,
+//                            child: new Icon(Icons.camera),
+//                            onPressed: () {
+//                              new QRCodeReader()
+//                                  .setAutoFocusIntervalInMs(200)
+//                                  .setForceAutoFocus(true)
+//                                  .setTorchEnabled(true)
+//                                  .setHandlePermissions(true)
+//                                  .setExecuteAfterPermissionGranted(true)
+//                                  .scan()
+//                                  .then((String url) async {
+//                                setState(() => _email.text = url);
+//                              });
+//                            },
+//                          ),
                           const SizedBox(height: 16.0),
                           new MaterialButton(
                             height: 50.0,
@@ -115,6 +113,8 @@ class LoginPageState extends State<LoginPage>
                             textColor: Colors.white,
                             child: _icon,
                             onPressed: () {
+                              _email.text = "adocquin@outlook.com";
+                              _password.text = "toto";
                               if (_email.text != "" || _password.text != "") {
                                 print("${_email.text} ${_password.text}");
                                 setState(() {
@@ -125,63 +125,62 @@ class LoginPageState extends State<LoginPage>
 //                                Map<String, dynamic> value = JSON.decode(serverdata);
 
                                 Connection connectionClient = new Connection();
-                                connectionClient.postRequest("/auth/sign_in/", {
+//
+                                connectionClient.postRequest("/users/authenticate", {
                                   "email": _email.text,
                                   "password": _password.text
                                 }).then((Map<String, dynamic> value) {
+                                  print("then");
                                   print(value);
                                   tokenGlobal = value["token"];
+                                  print("the token");
+                                  print(tokenGlobal);
                                   connectionClient.token = tokenGlobal;
-                                  connectionClient
-                                      .getJson("/user/")
-                                      .then((Map<String, dynamic> value) {
-                                    DataUser user =
-                                        new DataUser.fromJson(value["result"]);
-                                    print("user = $user");
-                                    Address address = new Address.fromJson(
-                                        value["result"]["address"]);
-                                    print("address = $address");
-                                    print(
-                                        "value[\"result\"][\"licenses\"] = ${value["result"]
-                                        ["licenses"]}");
-                                    Iterable<Licences> licences =
-                                        value["result"]["licenses"].map(
-                                            (Map<String, dynamic> data) =>
-                                                new Licences.fromJson(data));
-                                    print("test");
-                                    print("licences = $licences");
-                                    print("test 2");
-                                    new Storage("userlicences")
-                                      ..write(licences
-                                          .map((Licences licence) =>
-                                              licence.toJson())
-                                          .toList())
-                                      ..readListJson().then(
-                                          (List<Map<String, dynamic>> info) {
-                                        print("Info list after read $info");
-                                        print(info.map(
-                                            (Map<String, dynamic> data) =>
-                                                new Licences.fromJson(data)));
-                                      });
-                                    new Storage("userdata")
-                                      ..writeJson(user)
-                                      ..readJson().then((Map info) {
-                                        print("lecture du json");
-                                        print(info.toString());
-                                        print(new DataUser.fromJson(info));
-                                      });
-                                    new Storage("useraddress")
-                                      ..writeJson(address)
-                                      ..readJson().then((Map info) {
-                                        print(info.toString());
-                                        print(new Address.fromJson(info));
-                                      });
+                                  print(value["user"]);
+                                  DataUser user =
+                                  new DataUser.fromJson(value["user"]);
+                                  print("user = $user");
+                                  Address address = new Address.fromJson(
+                                      value["user"]["address"]);
+                                  print("address = $address");
+                                  print(
+                                      "value[\"user\"][\"licenses\"] = ${value["user"]["licenses"]}");
+                                  List licences =
+                                  value["user"]["licenses"].map((data) {
+                                    return new Licences.fromJson(data);
+                                  }).toList();
+                                  print("test");
+                                  print("licences = $licences");
+                                  print("test 2");
+                                  new Storage("userlicences")
+                                    ..write(licences
+                                        .map((licence) => licence.toJson())
+                                        .toList())
+                                    ..readListJson().then(
+                                            (List<dynamic> info) {
+                                          print("Info list after read $info");
+                                          print(info.map(
+                                                  (data) =>
+                                              new Licences.fromJson(data)));
+                                        });
+                                  new Storage("userdata")
+                                    ..writeJson(user)
+                                    ..readJson().then((Map info) {
+                                      print("lecture du json");
+                                      print(info.toString());
+                                      print(new DataUser.fromJson(info));
+                                    });
+                                  new Storage("useraddress")
+                                    ..writeJson(address)
+                                    ..readJson().then((Map info) {
+                                      print(info.toString());
+                                      print(new Address.fromJson(info));
+                                    });
 
-                                    if (tokenGlobal != null) {
-                                      Navigator.pushReplacementNamed(
-                                          context, "/home");
-                                    }
-                                  });
+                                  if (tokenGlobal != null) {
+                                    Navigator.pushReplacementNamed(
+                                        context, "/home");
+                                  }
                                 }).catchError((exeption) {
                                   print(showDialog<String>(
                                       context: context,
@@ -192,8 +191,9 @@ class LoginPageState extends State<LoginPage>
                                             new FlatButton(
                                                 child: const Text('OK'),
                                                 onPressed: () {
-                                                  Navigator.pop(
-                                                      context, exeption);
+                                                  Navigator
+                                                      .pushReplacementNamed(
+                                                          context, "/");
                                                   _icon = const Icon(
                                                       FontAwesomeIcons
                                                           .signInAlt);

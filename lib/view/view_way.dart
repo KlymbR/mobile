@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:klymbr/network/client.dart';
 import 'package:klymbr/view/drawer.dart' show LocalDrawer;
 import 'dart:async';
-import 'dart:convert';
 import 'package:klymbr/data.dart';
 
 enum _Access { Free, Occupied, Climbing }
@@ -164,7 +163,7 @@ class _ClimbWaysState extends State<ClimbWays> {
 
   Future<List<DemoItem<dynamic>>> get getDemoItem async {
     List<DemoItem<dynamic>> demoItems = new List();
-
+    print(" get getDemoItem");
     Connection connectionClient = new Connection();
     connectionClient.token = tokenGlobal;
     print("connection");
@@ -183,10 +182,12 @@ class _ClimbWaysState extends State<ClimbWays> {
                     })
               ])));
     });
+    print("fulldata ${fulldata}");
 
-    List<Map<String, dynamic>> climbdata = fulldata["result"];
+    List<dynamic> climbdata = fulldata["result"];
+    print("result ${climbdata}");
     print("climbdata $climbdata");
-    climbdata.forEach((Map<String, dynamic> data) {
+    climbdata.forEach((dynamic data) {
       _Access _access = data["path_free"] == true
           ? _Access.Free
           : data["path_free"] == false ? _Access.Occupied : _Access.Climbing;
@@ -274,7 +275,7 @@ class _ClimbWaysState extends State<ClimbWays> {
         },
       ));
     });
-
+    print("future value ??");
     return new Future.value(demoItems);
   }
 
@@ -293,7 +294,7 @@ class _ClimbWaysState extends State<ClimbWays> {
         child: new Container(
             margin: const EdgeInsets.all(22.0),
             child: new FutureBuilder(
-                future: _demoItems,
+                future: getDemoItem,
                 builder: (BuildContext context, AsyncSnapshot<List> snapshot) {
                   switch (snapshot.connectionState) {
                     case ConnectionState.none:
@@ -308,7 +309,8 @@ class _ClimbWaysState extends State<ClimbWays> {
                             });
                           },
                           // ignore: strong_mode_uses_dynamic_as_bottom
-                          children: snapshot.data.map((DemoItem<dynamic> item) {
+                          children: snapshot.data.map((dynamic item) {
+                            print(item);
                             return new ExpansionPanel(
                                 isExpanded: item.isExpanded,
                                 headerBuilder: item.headerBuilder,

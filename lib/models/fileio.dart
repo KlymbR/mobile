@@ -15,15 +15,15 @@ class Storage {
 
   Future<Map<String, dynamic>> readJson() async {
     try {
-      return JSON.decode((await _getLocalFile()).readAsStringSync());
+      return json.decode((await _getLocalFile()).readAsStringSync());
     } on FileSystemException {
       return null;
     }
   }
 
-  Future<List<Map<String, dynamic>>> readListJson() async {
+  Future<List<dynamic>> readListJson() async {
     try {
-      return JSON.decode((await _getLocalFile()).readAsStringSync());
+      return json.decode((await _getLocalFile()).readAsStringSync());
     } on FileSystemException {
       return null;
     }
@@ -38,11 +38,11 @@ class Storage {
   }
 
   Future<Null> writeJson(var data) async {
-    (await this._getLocalFile()).writeAsStringSync(JSON.encode(data.toJson()));
+    (await this._getLocalFile()).writeAsStringSync(json.encode(data.toJson()));
   }
 
   Future<Null> write(var data) async {
-    (await this._getLocalFile()).writeAsStringSync(JSON.encode(data));
+    (await this._getLocalFile()).writeAsStringSync(json.encode(data));
   }
 
 }

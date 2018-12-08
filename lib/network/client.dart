@@ -1,19 +1,17 @@
 import 'dart:async';
 import 'dart:convert';
-import 'package:http/http.dart';
-import 'package:flutter/services.dart';
-import 'package:klymbr/data.dart';
+import 'package:http/http.dart' as http;
 import 'dart:io';
 
 //"www.klymbr.com/api"
 class Connection {
   static const String _url = "http://www.api.klymbr.com"; // URL to web API
   String _token;
-  final _httpClient = createHttpClient();
+  final _httpClient = http.Client();
 
   Connection();
 
-  dynamic _extractData(Response resp) => JSON.decode(resp.body);
+  dynamic _extractData(http.Response resp) => json.decode(resp.body);
 
   Exception _handleError(dynamic e) {
     return new Exception(e);
@@ -25,25 +23,27 @@ class Connection {
 
   Future<Map<String, dynamic>> postRequest(
       [String url, Map<String, dynamic> params]) async {
-    print(JSON.encoder.convert(params));
+    print("in post request");
+    print(json.encoder.convert(params));
     try {
       final response = await _httpClient.post("$_url$url",
           headers:
                 {
-                  "Authorization": "JWT $_token",
+                  "Authorization": "bearer $_token",
                   "Content-Type": "application/json",
                   "Accept": "application/json",
                 },
-          body: JSON.encoder.convert(params));
+          body: json.encoder.convert(params));
       print("post ${response.body}");
       if (response.statusCode != 200) {
         throw "Probleme Serveur ${response.statusCode} ${response.body}";
       }
       return _extractData(response);
     } on SocketException catch (e) {
-      throw "Merci de verifier le reseau";
+      throw "Probleme Serveur";
     } catch (e) {
-      throw _handleError(e);
+      print(_handleError(e));
+      throw "Probleme Serveur";
     }
   }
 
@@ -59,6 +59,7 @@ class Connection {
         throw "Probleme Serveur ${response.statusCode} ${response.body}";
       }
       print("resonses.body = ${response.body}");
+      print("resonses.body = ${ _extractData(response)}");
       return _extractData(response);
     } on SocketException catch (e) {
       throw "Merci de verifier le reseau";
@@ -76,7 +77,7 @@ class Connection {
             "Authorization": "JWT $_token",
             "Content-Type": "application/json",
           },
-          body: JSON.encoder.convert(params));
+          body: json.encoder.convert(params));
       print("patch request  response = ${response.body}");
       if (response.statusCode != 200) {
         throw "Probleme Serveur ${response.statusCode} ${response.body}";
@@ -85,7 +86,7 @@ class Connection {
     } on SocketException catch (e) {
       throw "Merci de verifier le reseau";
     } catch (e) {
-      throw _handleError(e);
+      throw "Merci de verifier le reseau";
     }
   }
 }
