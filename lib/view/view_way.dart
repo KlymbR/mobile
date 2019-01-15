@@ -4,10 +4,11 @@ import 'package:klymbr/view/drawer.dart' show LocalDrawer;
 import 'dart:async';
 import 'package:klymbr/data.dart';
 
+@visibleForTesting
 enum _Access { Free, Occupied, Climbing }
 
-typedef Widget DemoItemBodyBuilder<T>(DemoItem<T> item);
-typedef String ValueToString<T>(T value);
+typedef DemoItemBodyBuilder<T> = Widget Function(DemoItem<T> item);
+typedef ValueToString<T> = String Function(T value);
 
 class CollapsibleBody extends StatelessWidget {
   const CollapsibleBody(
@@ -23,25 +24,27 @@ class CollapsibleBody extends StatelessWidget {
   final VoidCallback onCancel;
   final _Access access;
 
-  Widget _wayWidjet(BuildContext context) {
+  @override
+  Widget build(BuildContext context) {
     final ThemeData theme = Theme.of(context);
     final TextTheme textTheme = theme.textTheme;
     List<Widget> _climb = new List<Widget>();
 
-    if (access == _Access.Free)
+    if (access == _Access.Free) {
       _climb.add(new Container(
           margin: const EdgeInsets.only(right: 8.0),
           child: new FlatButton(
               onPressed: onSave,
               textTheme: ButtonTextTheme.accent,
               child: const Text('Grimper'))));
-    else if (access == _Access.Climbing)
+    } else if (access == _Access.Climbing) {
       _climb.add(new Container(
           margin: const EdgeInsets.only(right: 8.0),
           child: new FlatButton(
               onPressed: null,
               textTheme: ButtonTextTheme.accent,
               child: const Text('Stop'))));
+    }
 
     _climb.add(new FlatButton(
         onPressed: onCancel,
@@ -66,9 +69,6 @@ class CollapsibleBody extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.end, children: _climb))
     ]);
   }
-
-  @override
-  Widget build(BuildContext context) => _wayWidjet(context);
 }
 
 class DualHeaderWithHint extends StatelessWidget {
@@ -147,11 +147,12 @@ class DemoItem<T> {
           showHint: isExpanded);
     };
   }
+
+  Widget build() => builder(this);
 }
 
 class ClimbWays extends StatefulWidget {
   ClimbWays({Key key}) : super(key: key);
-
   static const String routeName = "/ways";
 
   @override
@@ -163,13 +164,14 @@ class _ClimbWaysState extends State<ClimbWays> {
 
   Future<List<DemoItem<dynamic>>> get getDemoItem async {
     List<DemoItem<dynamic>> demoItems = new List();
-    print(" get getDemoItem");
+    print("get getDemoItem");
     Connection connectionClient = new Connection();
-    connectionClient.token = tokenGlobal;
+    connectionClient.token = globalToken;
     print("connection");
 
-    Map<String, dynamic> fulldata =
-        await connectionClient.getJson("/path/all/").catchError((exeption) {
+    Map<String, dynamic> climbdata = await connectionClient
+        .getJson("/rooms/$globalRoom")
+        .catchError((exeption) {
       print(showDialog<String>(
           context: context,
           child: new AlertDialog(
@@ -182,20 +184,26 @@ class _ClimbWaysState extends State<ClimbWays> {
                     })
               ])));
     });
-    print("fulldata ${fulldata}");
 
-    List<dynamic> climbdata = fulldata["result"];
     print("result ${climbdata}");
     print("climbdata $climbdata");
-    climbdata.forEach((dynamic data) {
-      _Access _access = data["path_free"] == true
+    print("climbdata ${climbdata['paths']}");
+    climbdata['paths'].forEach((dynamic data) {
+      print("$data\n\n");
+    });
+    climbdata['paths'].forEach((dynamic data) {
+
+      String wayName = data["name"].toString();
+      print(wayName);
+      _Access _access = data["free"] == true
           ? _Access.Free
-          : data["path_free"] == false ? _Access.Occupied : _Access.Climbing;
+          : data["free"] == false ? _Access.Occupied : _Access.Climbing;
+      print("$wayName is $_access");
 
       demoItems.add(new DemoItem<String>(
-        name: "Voie n°" + data["path_id"].toString(),
-        value: 'Difficulté ' + data["path_difficulty"].toString(),
-        hint: data["path_free"].toString() == "true" ? "Libre" : "Occupé",
+        name: "Voie $wayName",
+        value: 'Difficulté ' + data["difficulty"].toString(),
+        hint: data["free"].toString() == "true" ? "Libre" : "Occupé",
         valueToString: (String value) => value,
         builder: (DemoItem<String> item) {
           void close() {
@@ -212,13 +220,10 @@ class _ClimbWaysState extends State<ClimbWays> {
                   margin: const EdgeInsets.symmetric(horizontal: 12.0),
                   onSave: () {
                     Form.of(context).save();
-                    item.value =
-                        "En grimpe sur la voie " + data["path_id"].toString();
-                    connectionClient.postRequest("/path/free", {
-                      "path_id":
-                          int.parse(data["path_id"].toString()),
-                      "path_free": false
-                    });
+                    item.value = "En grimpe sur la voie $wayName";
+                    connectionClient.patchRequest(
+                        "/rooms/$globalRoom/paths/${data["_id"].toString()}",
+                        {"free": false});
                     close();
                   },
                   onCancel: () {
@@ -235,12 +240,12 @@ class _ClimbWaysState extends State<ClimbWays> {
                             crossAxisAlignment: CrossAxisAlignment.center,
                             children: <Widget>[
                               new Text('Meilleur Score ' +
-                                  data["best_time"].toString() +
+                                  data["best"]["time"].toString() +
                                   "s"),
                               const SizedBox(height: 16.0),
-                              new Text(data["best_firstName"].toString() +
+                              new Text(data["best"]["firstname"].toString() +
                                   " " +
-                                  data["best_lastName"].toString()),
+                                  data["best"]["lastname"].toString()),
                               const SizedBox(height: 16.0),
 // pas de date pour le score ?
 //                              new Text('Le ' +
@@ -275,7 +280,8 @@ class _ClimbWaysState extends State<ClimbWays> {
         },
       ));
     });
-    print("future value ??");
+    print('return');
+    print(demoItems);
     return new Future.value(demoItems);
   }
 
@@ -294,27 +300,28 @@ class _ClimbWaysState extends State<ClimbWays> {
         child: new Container(
             margin: const EdgeInsets.all(22.0),
             child: new FutureBuilder(
-                future: getDemoItem,
-                builder: (BuildContext context, AsyncSnapshot<List> snapshot) {
+                future: _demoItems,
+                builder: (BuildContext context, AsyncSnapshot<List<DemoItem<dynamic>>> snapshot) {
                   switch (snapshot.connectionState) {
                     case ConnectionState.none:
                       return new ExpansionPanelList();
                     case ConnectionState.waiting:
                       return new ExpansionPanelList();
-                    default:
+                    case ConnectionState.active:
+                      return new ExpansionPanelList();
+                    case ConnectionState.done:
                       return new ExpansionPanelList(
                           expansionCallback: (int index, bool isExpended) {
                             setState(() {
                               snapshot.data[index].isExpanded = !isExpended;
                             });
                           },
-                          // ignore: strong_mode_uses_dynamic_as_bottom
-                          children: snapshot.data.map((dynamic item) {
-                            print(item);
+                          children:
+                              snapshot.data.map<ExpansionPanel>((DemoItem<dynamic> item) {
                             return new ExpansionPanel(
                                 isExpanded: item.isExpanded,
                                 headerBuilder: item.headerBuilder,
-                                body: item.builder(item));
+                                body: item.build());
                           }).toList());
                   }
                 })),

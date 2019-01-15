@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:klymbr/network/client.dart';
-import 'package:klymbr/data.dart' show tokenGlobal, serverdata;
+import 'package:klymbr/data.dart' show globalToken, serverdata;
 import 'package:klymbr/models/data.dart' show DataUser, Address, Licences;
 import 'package:klymbr/models/fileio.dart' show Storage;
+import 'package:flutter_svg/flutter_svg.dart';
 
 class LoginPage extends StatefulWidget {
   static const String routename = "/";
@@ -24,7 +25,7 @@ class LoginPageState extends State<LoginPage>
   void initState() {
     super.initState();
     _iconAnimationController = new AnimationController(
-        vsync: this, duration: new Duration(milliseconds: 500));
+        vsync: this, duration: new Duration(milliseconds: 1000));
     _iconAnimation = new CurvedAnimation(
       parent: _iconAnimationController,
       curve: Curves.bounceOut,
@@ -56,9 +57,14 @@ class LoginPageState extends State<LoginPage>
                   new Padding(
                     padding: const EdgeInsets.only(top: 40.0),
                   ),
-                  new FlutterLogo(
-                    size: _iconAnimation.value * 140.0,
+                  new Image.asset(
+                    'images/LogoEIP-01.png',
+                    width: _iconAnimation.value * 250.0,
+                    height:_iconAnimation.value * 210.0,
                   ),
+/*                  new FlutterLogo(
+                    size: _iconAnimation.value * 140.0,
+                  ),*/
                   new Container(
                     padding: const EdgeInsets.all(40.0),
                     child: new Form(
@@ -132,10 +138,10 @@ class LoginPageState extends State<LoginPage>
                                 }).then((Map<String, dynamic> value) {
                                   print("then");
                                   print(value);
-                                  tokenGlobal = value["token"];
+                                  globalToken = value["token"];
                                   print("the token");
-                                  print(tokenGlobal);
-                                  connectionClient.token = tokenGlobal;
+                                  print(globalToken);
+                                  connectionClient.token = globalToken;
                                   print(value["user"]);
                                   DataUser user =
                                   new DataUser.fromJson(value["user"]);
@@ -177,7 +183,7 @@ class LoginPageState extends State<LoginPage>
                                       print(new Address.fromJson(info));
                                     });
 
-                                  if (tokenGlobal != null) {
+                                  if (globalToken != null) {
                                     Navigator.pushReplacementNamed(
                                         context, "/home");
                                   }

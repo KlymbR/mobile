@@ -1,5 +1,6 @@
-String tokenGlobal;
-
+String globalToken;
+String globalRoom;
+String roomName;
 const String serverdata = '''
 {  
    "success":true,

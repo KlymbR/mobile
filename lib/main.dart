@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:klymbr/view/view_way.dart';
 import 'package:klymbr/view/view_user.dart' show UserView;
-import 'package:klymbr/view/view_map.dart' show MapView;
+//import 'package:klymbr/view/view_map.dart' show MapView;
 import 'package:klymbr/view/view_stats.dart' show Stats;
 import 'package:klymbr/view/view_login.dart' show LoginPage;
+import 'package:klymbr/view/vway.dart' show ExpansionPanelsDemo;
 // import 'package:klymbr/example/contacts_demo.dart';
 
 void main() {
@@ -42,6 +43,11 @@ class MyApp extends StatelessWidget {
           builder: (_) => new ClimbWays(),
           settings: settings,
         );
+      case ExpansionPanelsDemo.routeName:
+        return new DrawerRoute(
+          builder: (_) => new ExpansionPanelsDemo(),
+          settings: settings,
+        );
       case Stats.routename:
         return new DrawerRoute(builder: (_) => new Stats(), settings: settings);
     }
@@ -56,7 +62,7 @@ class MyApp extends StatelessWidget {
       title: this._titleapp,
       routes: <String, WidgetBuilder>{
         // '/b': (BuildContext context) => new ContactsDemo(),
-        '/map': (BuildContext context) => new MapView(),
+//        '/map': (BuildContext context) => new MapView(),
       },
       theme: new ThemeData(
         primarySwatch: this._colorapp,

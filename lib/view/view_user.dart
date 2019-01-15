@@ -192,7 +192,7 @@ class __UserFormFieldState extends State<_UserFormField> {
       form.save();
       Connection connectionClient = new Connection();
       connectionClient
-        ..token = tokenGlobal
+        ..token = globalToken
         ..patchRequest("/user/update", _user.toJson())
             .then((Map<String, dynamic> value) {
           print(showDialog<String>(

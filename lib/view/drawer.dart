@@ -1,4 +1,30 @@
+import 'dart:async';
 import 'package:flutter/material.dart';
+import 'package:klymbr/network/client.dart';
+import 'package:klymbr/data.dart';
+
+Future pause(Duration d) => new Future.delayed(d);
+
+/*await pause(const Duration(milliseconds: 100));*/
+class _DropdownBt extends StatelessWidget {
+  final Map<String, String> rooms;
+  final ValueChanged<String> onPressed;
+  final String value;
+
+  const _DropdownBt({Key key, this.value, this.rooms, this.onPressed}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return DropdownButton<String>(
+        hint: Text("Select Room"),
+        onChanged: onPressed,
+        value: value,
+        items: rooms.keys.map((String value) {
+          return new DropdownMenuItem<String>(
+              value: value, child: new Text(value));
+        }).toList());
+  }
+}
 
 class LocalDrawer extends StatefulWidget {
   LocalDrawer({Key key, this.localRoute}) : super(key: key);
@@ -9,6 +35,47 @@ class LocalDrawer extends StatefulWidget {
 }
 
 class _LocalDrawerState extends State<LocalDrawer> {
+  Future<Map<String, String>> _getRoomName;
+  bool activateWay;
+  static DropdownButton empyDropdowmn = DropdownButton<String>(
+      disabledHint: new Text("Loading"), onChanged: null, items: null);
+
+  Future<Map<String, String>> get getRoomName async {
+/*    await pause(const Duration(seconds: 5));*/
+    Connection connectionClient = new Connection();
+    connectionClient.token = globalToken;
+
+
+    List<dynamic> roomNames =
+        await connectionClient.getJsonList("/rooms").catchError((exeption) {
+      print(showDialog<String>(
+          context: context,
+          builder: (BuildContext context) => new AlertDialog(
+                  content: new Text("Problèmes\n $exeption"),
+                  actions: <Widget>[
+                    new FlatButton(
+                        child: const Text('OK'),
+                        onPressed: () {
+                          Navigator.pop(context, exeption);
+                        })
+                  ])));
+    });
+
+    Map<String, String> roomName = Map<String, String>();
+    roomNames.forEach((elem) {
+      roomName[elem["title"]] = elem["_id"];
+    });
+
+    return new Future.value(roomName);
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    _getRoomName = getRoomName;
+    activateWay = globalRoom == null ? false : true;
+  }
+
   @override
   Widget build(BuildContext context) {
     return new Drawer(
@@ -29,11 +96,43 @@ class _LocalDrawerState extends State<LocalDrawer> {
               Navigator.pushReplacementNamed(context, "/home");
             },
           ),
+          new Container(
+            padding: const EdgeInsets.only(right: 6.0),
+            alignment: Alignment.center,
+            child: new FutureBuilder(
+                future: _getRoomName,
+                builder: (BuildContext context,
+                    AsyncSnapshot<Map<String, String>> snapshot) {
+                  switch (snapshot.connectionState) {
+                    case ConnectionState.none:
+                      return new Text('Empty');
+                    case ConnectionState.waiting:
+                      return empyDropdowmn;
+                    case ConnectionState.active:
+                      return empyDropdowmn;
+                    case ConnectionState.done:
+                      return _DropdownBt(
+                        rooms: snapshot.data,
+                        value: roomName,
+                        onPressed: (String newValue) {
+                          globalRoom = snapshot.data[newValue];
+                          setState(() {
+                            roomName = newValue;
+                            activateWay = true;
+                          });
+                          print(globalRoom);
+                        },
+                      );
+                  }
+                }),
+          ),
+//          Selection des voies
           new ListTile(
-//            leading: const Icon(Icons.navigate_next),
-            title: const Text('Déconnection'),
+            enabled: activateWay,
+            title: const Text('Voies'),
             onTap: () {
-              Navigator.pushReplacementNamed(context, "/");
+              /*/ways*/
+              Navigator.pushReplacementNamed(context, "/ways");
             },
           ),
           new ListTile(
@@ -43,18 +142,18 @@ class _LocalDrawerState extends State<LocalDrawer> {
               Navigator.popAndPushNamed(context, "/map");
             },
           ),
-//          Selection des voies
           new ListTile(
-            title: const Text('Voies'),
+
+//            leading: const Icon(Icons.navigate_next),
+            title: const Text('Déconnection'),
             onTap: () {
-              Navigator.pushReplacementNamed(context, "/ways");
+              Navigator.pushReplacementNamed(context, "/");
             },
           ),
 //        Différentes données affichées dans l'app :
 //        nombre de voies grimpées, amis, difficulté moyenne,
 //        temps passé dans la salle, dates et heures des entrées/sorties de la salle,
 //        date de validité de la carte, salles de sports auxquelles l'utilisateur a accès
-
 
 //          new ListTile(
 //            title: const Text('Stats'),

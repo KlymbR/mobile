@@ -20,7 +20,8 @@ class Connection {
   set token(String tokenVal) {
     this._token = tokenVal;
   }
-
+/*  --header "Content-Type: application/json" \
+  --header "Authorization: bearer*/
   Future<Map<String, dynamic>> postRequest(
       [String url, Map<String, dynamic> params]) async {
     print("in post request");
@@ -53,8 +54,30 @@ class Connection {
           headers: _token == null
               ? null
               : {
-                  "Authorization": "JWT $_token"
+                  "Authorization": "bearer $_token"
                 });
+      if (response.statusCode != 200) {
+        throw "Probleme Serveur ${response.statusCode} ${response.body}";
+      }
+      print("resonses.body = ${response.body}");
+      print("resonses.body = ${ _extractData(response)}");
+      return _extractData(response);
+    } on SocketException catch (e) {
+      throw "Merci de verifier le reseau";
+    } catch (e) {
+      print("problemes getJson = ${e.toString()}");
+      throw _handleError(e);
+    }
+  }
+
+  Future<List<dynamic>> getJsonList(String params) async {
+    try {
+      final response = await _httpClient.get("$_url$params",
+          headers: _token == null
+              ? null
+              : {
+            "Authorization": "bearer $_token"
+          });
       if (response.statusCode != 200) {
         throw "Probleme Serveur ${response.statusCode} ${response.body}";
       }
@@ -74,7 +97,7 @@ class Connection {
     try {
       final response = await _httpClient.patch("$_url$url",
           headers: {
-            "Authorization": "JWT $_token",
+            "Authorization": "bearer $_token",
             "Content-Type": "application/json",
           },
           body: json.encoder.convert(params));
