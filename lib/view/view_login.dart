@@ -1,10 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:klymbr/network/client.dart';
-import 'package:klymbr/data.dart' show globalToken, serverdata;
+import 'package:klymbr/data.dart' show globalToken, globalStats;
 import 'package:klymbr/models/data.dart' show DataUser, Address, Licences;
 import 'package:klymbr/models/fileio.dart' show Storage;
-import 'package:flutter_svg/flutter_svg.dart';
 
 class LoginPage extends StatefulWidget {
   static const String routename = "/";
@@ -34,6 +33,7 @@ class LoginPageState extends State<LoginPage>
     _iconAnimationController.forward();
   }
 
+
   @override
   Widget build(BuildContext context) {
     return new Scaffold(
@@ -62,9 +62,6 @@ class LoginPageState extends State<LoginPage>
                     width: _iconAnimation.value * 250.0,
                     height:_iconAnimation.value * 210.0,
                   ),
-/*                  new FlutterLogo(
-                    size: _iconAnimation.value * 140.0,
-                  ),*/
                   new Container(
                     padding: const EdgeInsets.all(40.0),
                     child: new Form(
@@ -158,6 +155,8 @@ class LoginPageState extends State<LoginPage>
                                   print("test");
                                   print("licences = $licences");
                                   print("test 2");
+                                  globalStats = value["user"]['tshirt'];
+                                  print('$globalStats stats');
                                   new Storage("userlicences")
                                     ..write(licences
                                         .map((licence) => licence.toJson())

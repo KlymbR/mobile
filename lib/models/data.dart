@@ -81,7 +81,7 @@ class Address implements DataImplement {
 }
 
 class DataUser implements DataImplement {
-  String email, firstname, lastname, phone, licencenbr, id;
+  String email, firstname, lastname, phone, id;
   DateTime birthdate;
   int gender;
 
@@ -91,17 +91,16 @@ class DataUser implements DataImplement {
         lastname = "",
         phone = "",
         firstname = "",
-        id = "",
-        licencenbr = "";
+        id = "";
 
   DataUser.init(this.id, this.email, this.firstname, this.lastname, this.phone, this.gender,
-      this.birthdate, this.licencenbr);
+      this.birthdate);
 
   factory DataUser.fromJson(Map<String, dynamic> data) {
     return data == null
         ? null
         : new DataUser.init(data['_id'], data['email'], data['firstname'], data['lastname'], data['phone'],
-            data['gender'], DateTime.parse(data['birthdate']), data['licencenbr']);
+            data['gender'], DateTime.parse(data['birthdate']));
   }
 
   String toString() => "User name $lastname de sex $gender";
@@ -113,7 +112,6 @@ class DataUser implements DataImplement {
         "lastname": lastname,
         "phone": phone,
         "birthdate": birthdate.toString(),
-        "gender": gender,
-        "licencenbr": licencenbr
+        "gender": gender
       };
 }

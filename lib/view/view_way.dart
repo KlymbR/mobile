@@ -131,7 +131,7 @@ class DemoItem<T> {
       : textController = new TextEditingController(text: valueToString(value));
 
   final String name;
-  final String hint;
+   String hint;
   final TextEditingController textController;
   final DemoItemBodyBuilder<T> builder;
   final ValueToString<T> valueToString;
@@ -192,8 +192,8 @@ class _ClimbWaysState extends State<ClimbWays> {
       print("$data\n\n");
     });
     climbdata['paths'].forEach((dynamic data) {
-
       String wayName = data["name"].toString();
+      String avalaible = data["free"].toString() == "true" ? "Libre" : "Occupé";
       print(wayName);
       _Access _access = data["free"] == true
           ? _Access.Free
@@ -203,7 +203,7 @@ class _ClimbWaysState extends State<ClimbWays> {
       demoItems.add(new DemoItem<String>(
         name: "Voie $wayName",
         value: 'Difficulté ' + data["difficulty"].toString(),
-        hint: data["free"].toString() == "true" ? "Libre" : "Occupé",
+        hint: avalaible,
         valueToString: (String value) => value,
         builder: (DemoItem<String> item) {
           void close() {
@@ -224,6 +224,9 @@ class _ClimbWaysState extends State<ClimbWays> {
                     connectionClient.patchRequest(
                         "/rooms/$globalRoom/paths/${data["_id"].toString()}",
                         {"free": false});
+                    setState(() {
+                      item.hint = "Occupé";
+                    });
                     close();
                   },
                   onCancel: () {
@@ -301,7 +304,8 @@ class _ClimbWaysState extends State<ClimbWays> {
             margin: const EdgeInsets.all(22.0),
             child: new FutureBuilder(
                 future: _demoItems,
-                builder: (BuildContext context, AsyncSnapshot<List<DemoItem<dynamic>>> snapshot) {
+                builder: (BuildContext context,
+                    AsyncSnapshot<List<DemoItem<dynamic>>> snapshot) {
                   switch (snapshot.connectionState) {
                     case ConnectionState.none:
                       return new ExpansionPanelList();
@@ -316,8 +320,8 @@ class _ClimbWaysState extends State<ClimbWays> {
                               snapshot.data[index].isExpanded = !isExpended;
                             });
                           },
-                          children:
-                              snapshot.data.map<ExpansionPanel>((DemoItem<dynamic> item) {
+                          children: snapshot.data
+                              .map<ExpansionPanel>((DemoItem<dynamic> item) {
                             return new ExpansionPanel(
                                 isExpanded: item.isExpanded,
                                 headerBuilder: item.headerBuilder,

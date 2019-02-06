@@ -143,6 +143,13 @@ class _LocalDrawerState extends State<LocalDrawer> {
             },
           ),
           new ListTile(
+//            leading: const Icon(Icons.navigate_next),
+            title: const Text('Stats'),
+            onTap: () {
+              Navigator.pushReplacementNamed(context, "/stats");
+            },
+          ),
+          new ListTile(
 
 //            leading: const Icon(Icons.navigate_next),
             title: const Text('Déconnection'),

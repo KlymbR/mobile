@@ -1,11 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:klymbr/view/view_way.dart';
 import 'package:klymbr/view/view_user.dart' show UserView;
-//import 'package:klymbr/view/view_map.dart' show MapView;
 import 'package:klymbr/view/view_stats.dart' show Stats;
 import 'package:klymbr/view/view_login.dart' show LoginPage;
-import 'package:klymbr/view/vway.dart' show ExpansionPanelsDemo;
-// import 'package:klymbr/example/contacts_demo.dart';
+import 'package:klymbr/view/place_marker.dart' show PlaceMarkerBody;
+import 'package:klymbr/view/stats.dart' show StatsView;
 
 void main() {
   runApp(new MyApp());
@@ -29,10 +28,12 @@ class MyApp extends StatelessWidget {
   final Brightness _brightness = Brightness.light;
 
   DrawerRoute _routeTo(RouteSettings settings) {
+
     switch (settings.name) {
       case LoginPage.routename:
         return new DrawerRoute(
-            builder: (_) => new LoginPage(), settings: settings);
+            builder: (BuildContext context) => new LoginPage(),
+            settings: settings);
       case UserView.routeWay:
         return new DrawerRoute(
           builder: (_) => new UserView(),
@@ -43,9 +44,14 @@ class MyApp extends StatelessWidget {
           builder: (_) => new ClimbWays(),
           settings: settings,
         );
-      case ExpansionPanelsDemo.routeName:
+      case "/map":
         return new DrawerRoute(
-          builder: (_) => new ExpansionPanelsDemo(),
+          builder: (_) => new PlaceMarkerBody(),
+          settings: settings,
+        );
+      case StatsView.routeWay:
+        return new DrawerRoute(
+          builder: (_) => new StatsView(),
           settings: settings,
         );
       case Stats.routename:

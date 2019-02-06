@@ -60,13 +60,12 @@ class __UserFormFieldState extends State<_UserFormField> {
 
   DataUser _user;
   Address _address;
-  String _userPicture;
+  static final String _userPicture = "images/daftpunk.jpg";
   bool _autovalidate = false;
   bool _formWasEdited = false;
 
   Future<List<ExpantionItem<dynamic>>> get getExpensionItem async {
-    List<dynamic> info =
-        await new Storage("userlicences").readListJson();
+    List<dynamic> info = await new Storage("userlicences").readListJson();
     print("expension ");
     List<ExpantionItem<dynamic>> expensionItems = new List();
     print("userlicences = $info");
@@ -75,7 +74,7 @@ class __UserFormFieldState extends State<_UserFormField> {
       print("data = $data");
       expensionItems.add(new ExpantionItem<String>(
           name: "Licence",
-          value: data["fed"],
+          value: data['club']['name'],
           valueToString: (String value) => value,
           builder: (ExpantionItem<String> item) {
             void close() {
@@ -84,6 +83,7 @@ class __UserFormFieldState extends State<_UserFormField> {
               });
             }
 
+            DateTime end = DateTime.parse(data["end"]);
             return new Column(
               children: <Widget>[
                 new Container(
@@ -95,13 +95,15 @@ class __UserFormFieldState extends State<_UserFormField> {
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         crossAxisAlignment: CrossAxisAlignment.center,
                         children: <Widget>[
-                          new Text("${data["status"]}"),
+                          new Text(
+                              "Licence ${data['status'] == 1 ? "Active" : "Desactive"}"),
                           const SizedBox(height: 16.0),
-                          new Text("Club ${data["clubname"]}"),
+                          new Text("Club numero ${data['club']['id']}"),
                           const SizedBox(height: 16.0),
-                          new Text("Numero du club ${data["clubid"]}"),
+                          new Text("Numero de licence ${data['number']}"),
                           const SizedBox(height: 16.0),
-                          new Text("Valide jusqu'au ${data["end"]}"),
+                          new Text(
+                              "Valide jusqu'au ${end.day}/${end.month}/${end.year}"),
                         ],
                       )),
                     ],
@@ -117,6 +119,7 @@ class __UserFormFieldState extends State<_UserFormField> {
   @override
   void dispose() {
     // Clean up the controller when the Widget is disposed
+    super.dispose();
     _controllerList[0].dispose();
     _controllerList[1].dispose();
     _controllerList[2].dispose();
@@ -124,8 +127,6 @@ class __UserFormFieldState extends State<_UserFormField> {
     _controllerList[4].dispose();
     _controllerList[5].dispose();
     _controllerList[6].dispose();
-    _controllerList[7].dispose();
-    super.dispose();
   }
 
   @override
@@ -149,10 +150,7 @@ class __UserFormFieldState extends State<_UserFormField> {
               _user.lastname == null ? "" : _user.lastname;
           _controllerList[1].text =
               _user.firstname == null ? "" : _user.firstname;
-          _controllerList[2].text =
-              _user.licencenbr == null ? "" : _user.licencenbr;
-          _controllerList[3].text = _user.phone == null ? "" : _user.phone;
-          _userPicture = "images/daftpunk.jpg";
+          _controllerList[2].text = _user.phone == null ? "" : _user.phone;
           _user.birthdate;
           _user.gender;
           print("setstate end");
@@ -166,13 +164,13 @@ class __UserFormFieldState extends State<_UserFormField> {
       _address = new Address.fromJson(json);
       print(_address);
       if (_address != null) {
-        _controllerList[4].text =
+        _controllerList[3].text =
             _address.number == null ? "" : _address.number.toString();
-        _controllerList[5].text =
+        _controllerList[4].text =
             _address.street == null ? "" : _address.street;
-        _controllerList[6].text =
+        _controllerList[5].text =
             _address.postalcode == null ? "" : _address.postalcode.toString();
-        _controllerList[7].text = _address.city == null ? "" : _address.city;
+        _controllerList[6].text = _address.city == null ? "" : _address.city;
       }
     });
     print("useraddress = ");
@@ -193,7 +191,7 @@ class __UserFormFieldState extends State<_UserFormField> {
       Connection connectionClient = new Connection();
       connectionClient
         ..token = globalToken
-        ..patchRequest("/user/update", _user.toJson())
+        ..patchRequest("/users/${_user.id}", _user.toJson())
             .then((Map<String, dynamic> value) {
           print(showDialog<String>(
               context: context,
@@ -219,7 +217,7 @@ class __UserFormFieldState extends State<_UserFormField> {
                         })
                   ])));
         });
-      print(_user.toJson());
+      print('userjson' + _user.toJson().toString());
       print(_address.toJson());
       showInSnackBar('${_user.lastname}\'s phone number is ${_user.phone}');
     }
@@ -234,20 +232,11 @@ class __UserFormFieldState extends State<_UserFormField> {
     return null;
   }
 
-  String _validateLicence(String value) {
-    _formWasEdited = true;
-    if (value.isEmpty) return "Merci d'enregistre votre licence";
-    final RegExp nameExp = new RegExp(r'^[A-Za-z0-9]+$');
-    if (!nameExp.hasMatch(value))
-      return 'Seule les caractères alphanumérique sont autorisé';
-    return null;
-  }
-
   String _validatePhoneNumber(String value) {
     _formWasEdited = true;
-    final RegExp phoneExp = new RegExp(r'^\d-\d\d-\d\d-\d\d-\d\d$');
+    final RegExp phoneExp = new RegExp(r'^\d{10}$');
     if (!phoneExp.hasMatch(value))
-      return "+33 #-##-##-##-## - Merci d'entré un telephone valid.";
+      return "######### - Merci d'entré un telephone valid.";
     return null;
   }
 
@@ -329,7 +318,6 @@ class __UserFormFieldState extends State<_UserFormField> {
               children: <Widget>[
                 new Expanded(
                   child: new TextFormField(
-                    autofocus: true,
                     decoration: const InputDecoration(
                       icon: const Icon(Icons.person),
                       hintText: "Comment tu t'appel",
@@ -345,7 +333,6 @@ class __UserFormFieldState extends State<_UserFormField> {
                 const SizedBox(width: 16.0),
                 new Expanded(
                   child: new TextFormField(
-                    autofocus: true,
                     decoration: const InputDecoration(
                       hintText: "Comment tu t'appel",
                       labelText: 'Prenom *',
@@ -380,34 +367,13 @@ class __UserFormFieldState extends State<_UserFormField> {
           new Container(
             padding: const EdgeInsets.only(right: 12.0),
             child: new TextFormField(
-              autofocus: true,
-              decoration: const InputDecoration(
-                icon: const Icon(Icons.confirmation_number),
-                prefixText: 'N°',
-                hintText: "Licence",
-                labelText: 'Licence *',
-                prefixStyle: const TextStyle(color: Colors.red),
-                suffixStyle: const TextStyle(color: Colors.red),
-              ),
-              controller: _controllerList[2],
-              maxLines: 1,
-              onSaved: (String value) {
-                _user.licencenbr = value;
-              },
-              validator: _validateLicence,
-            ),
-          ),
-          new Container(
-            padding: const EdgeInsets.only(right: 12.0),
-            child: new TextFormField(
-              autofocus: true,
               decoration: const InputDecoration(
                   icon: const Icon(Icons.phone),
                   hintText: 'Where can we reach you?',
                   labelText: 'Phone Number *',
-                  prefixText: '+33'),
+                  prefixText: null),
               keyboardType: TextInputType.phone,
-              controller: _controllerList[3],
+              controller: _controllerList[2],
               onSaved: (String value) {
                 _user.phone = value;
               },
@@ -416,7 +382,7 @@ class __UserFormFieldState extends State<_UserFormField> {
               inputFormatters: <TextInputFormatter>[
                 WhitelistingTextInputFormatter.digitsOnly,
                 // Fit the validating format.
-                _phoneNumberFormatter,
+                /*_phoneNumberFormatter,*/
               ],
             ),
           ),
@@ -426,13 +392,12 @@ class __UserFormFieldState extends State<_UserFormField> {
             child: new Row(children: <Widget>[
               new Expanded(
                 child: new TextFormField(
-                  autofocus: true,
                   decoration: const InputDecoration(
                     hintText: "Numero",
                     labelText: 'Numero de rue',
                   ),
                   keyboardType: TextInputType.number,
-                  controller: _controllerList[4],
+                  controller: _controllerList[3],
                   onSaved: (String value) {
                     _address.number = int.parse(value);
                   },
@@ -441,12 +406,11 @@ class __UserFormFieldState extends State<_UserFormField> {
               const SizedBox(width: 16.0),
               new Expanded(
                 child: new TextFormField(
-                  autofocus: true,
                   decoration: const InputDecoration(
                     hintText: "Rue",
                     labelText: 'Nom de rue',
                   ),
-                  controller: _controllerList[5],
+                  controller: _controllerList[4],
                   onSaved: (String value) {
                     _address.street = value;
                   },
@@ -461,9 +425,8 @@ class __UserFormFieldState extends State<_UserFormField> {
               children: <Widget>[
                 new Expanded(
                   child: new TextFormField(
-                    autofocus: true,
                     keyboardType: TextInputType.number,
-                    controller: _controllerList[6],
+                    controller: _controllerList[5],
                     onSaved: (String value) {
                       _address.postalcode = int.parse(value);
                     },
@@ -476,9 +439,8 @@ class __UserFormFieldState extends State<_UserFormField> {
                 const SizedBox(width: 16.0),
                 new Expanded(
                   child: new TextFormField(
-                    autofocus: true,
                     keyboardType: TextInputType.text,
-                    controller: _controllerList[7],
+                    controller: _controllerList[6],
                     onSaved: (String value) {
                       _address.city = value;
                     },
@@ -554,23 +516,23 @@ class _FrNumberTextInputFormatter extends TextInputFormatter {
     int usedSubstringIndex = 0;
     final StringBuffer newText = new StringBuffer();
     if (newTextLength > 1) {
-      newText.write(newValue.text.substring(0, usedSubstringIndex = 1) + "-");
+      newText.write(newValue.text.substring(0, usedSubstringIndex = 1));
       if (newValue.selection.end >= 1) selectionIndex++;
     }
-    if (newTextLength > 3) {
-      newText.write(newValue.text.substring(1, usedSubstringIndex = 3) + "-");
-      if (newValue.selection.end >= 3) selectionIndex++;
+    if (newTextLength > 2) {
+      newText.write(newValue.text.substring(1, usedSubstringIndex = 2));
+      if (newValue.selection.end >= 2) selectionIndex++;
     }
-    if (newTextLength > 5) {
-      newText.write(newValue.text.substring(3, usedSubstringIndex = 5) + "-");
-      if (newValue.selection.end >= 5) selectionIndex++;
+    if (newTextLength > 4) {
+      newText.write(newValue.text.substring(2, usedSubstringIndex = 4));
+      if (newValue.selection.end >= 4) selectionIndex++;
     }
-    if (newTextLength > 7) {
-      newText.write(newValue.text.substring(5, usedSubstringIndex = 7) + "-");
-      if (newValue.selection.end >= 7) selectionIndex++;
+    if (newTextLength > 6) {
+      newText.write(newValue.text.substring(4, usedSubstringIndex = 6));
+      if (newValue.selection.end >= 6) selectionIndex++;
     }
-    if (newTextLength > 9) {
-      newValue.text.substring(9, selectionIndex);
+    if (newTextLength > 8) {
+      newValue.text.substring(8, selectionIndex);
     }
     // Dump the rest.
     if (newTextLength >= usedSubstringIndex)
